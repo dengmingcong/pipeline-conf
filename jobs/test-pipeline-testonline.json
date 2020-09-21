@@ -1,5 +1,5 @@
 {
-    "env": "ci",
+    "env": "testonline",
     "git": {
         "url": "git@fangcun.vesync.com:testTeam/cloud-api-test.git",
         "branch": "dev"

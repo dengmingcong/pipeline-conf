@@ -3,7 +3,7 @@ import groovy.json.JsonSlurper
 
 def AGENT_LABEL = ""
 def JENKINS_CONF_REPO_URL = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
-def JENKINS_CONF_REPO_BRANCHE = "master"
+def JENKINS_CONF_REPO_BRANCHE = "dev"
 def JENKINS_CONF_DIR = "jobs"
 def JENKINS_EXTRAS_DIR = "extras"
 def JENKINS_CONF_CONTENT = ""
