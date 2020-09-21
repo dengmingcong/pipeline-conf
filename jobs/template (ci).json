@@ -1,0 +1,9 @@
+{
+    "env": "ci",
+    "git": {
+        "branch": "Raigor"
+    },
+    "jmeter": {
+        "jmx": "testplans/AirHumidifier/Classic200S_JP/WiFiBTOnboardingNotify_AirHumidifier_Classic200S_JP.jmx"
+    }
+}
