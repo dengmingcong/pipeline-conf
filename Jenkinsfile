@@ -23,7 +23,7 @@ node {
 			echo "Configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json does not exist in: repository ${JENKINS_CONF_REPO_URL}, branch ${JENKINS_CONF_REPO_BRANCHE}"
   	  		sh "exit 1"
 		}
-		echo "Got configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json:"
+		echo "Got configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json"
 		JENKINS_CONF_CONTENT = readFile(encoding: 'utf-8', file: "${env.JOB_NAME}.json")
 		echo JENKINS_CONF_CONTENT
 	}
@@ -84,7 +84,7 @@ node(AGENT_LABEL) {
 		sh "cd ${PROJECT_ROOT_DIR}; [[ -d reports ]] || mkdir reports; python3 bin/simple_controller_to_transaction_controller.py ${JMX} ${JMX}; cp resources/img/* reports"
 		
 		echo "Generating customized build.xml.."
-		sh "python3 ${CUSTOMIZE_BUILD_XML_PY} ${SAMPLE_BUILD_XML} ${OUTPUT_BUILD_XML} ${PROJECT_ROOT_DIR} ${JMETER_HOME} ${JMX} ${TEST_NAME} -p ${ADDITIONAL_PROPERTIES}"
+		sh "python3 ${CUSTOMIZE_BUILD_XML_PY} ${SAMPLE_BUILD_XML} ${OUTPUT_BUILD_XML} ${PROJECT_ROOT_DIR} ${JMETER_HOME} ${JMX} ${TEST_NAME} -p ${PROPERTY_FILES}"
 	}
 	
 	stage("Ant Build") {
@@ -97,6 +97,6 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Mark Unstable") {
-		sh "[[ `grep -c '<failure>true</failure>' ${TEST_PATH}/${TEST_NAME}.jtl` == 0 ]]"
+		sh "[[ `grep -c '<failure>true</failure>' ${PROJECT_ROOT_DIR}/${TEST_NAME}.jtl` == 0 ]]"
 	}
 }
