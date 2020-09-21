@@ -5,7 +5,7 @@
         "branch": "dev"
     },
     "jmeter": {
-        "jmx": "testplans/AirPurifier/Core400SUS/Core400SUS.jmx",
-        "properties": "testplans/AirPurifier/Core400SUS/ci.properties"
+        "jmx": "testplans/test/test.jmx",
+        "properties": "testplans/test/ci.properties"
     }
 }
