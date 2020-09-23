@@ -4,6 +4,6 @@
         "branch": "Yukin"
     },
     "jmeter": {
-        "jmx": "testSripts/10AUS_V1.0.jmx"
+        "jmx": "testSripts/10AUS.jmx"
     }
 }
