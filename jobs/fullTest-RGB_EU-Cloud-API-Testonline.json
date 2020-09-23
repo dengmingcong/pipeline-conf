@@ -1,9 +1,0 @@
-{
-    "env": "testonline",
-    "git": {
-        "branch": "master"
-    },
-    "jmeter": {
-        "jmx": "testScripts/WIFI_RGB_EU_Testonline_V1.0.jmx"
-    }
-}

@@ -1,9 +1,0 @@
-{
-    "env": "predeploy",
-    "git": {
-        "branch": "master"
-    },
-    "jmeter": {
-        "jmx": "testScripts/2way_Predeploy_V1.0.jmx"
-    }
-}

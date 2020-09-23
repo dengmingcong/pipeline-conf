@@ -1,9 +1,0 @@
-{
-    "env": "predeploy",
-    "git": {
-        "branch": "master"
-    },
-    "jmeter": {
-        "jmx": "testScripts/SmartBulb_Predeploy_V1.0.jmx"
-    }
-}

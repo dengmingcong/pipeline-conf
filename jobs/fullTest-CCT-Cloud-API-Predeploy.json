@@ -1,9 +1,0 @@
-{
-    "env": "predeploy",
-    "git": {
-        "branch": "master"
-    },
-    "jmeter": {
-        "jmx": "testScripts/WIFI_CCT_Predeploy_V1.0.jmx"
-    }
-}
