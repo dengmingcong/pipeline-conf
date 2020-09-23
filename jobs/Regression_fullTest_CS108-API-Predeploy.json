@@ -4,6 +4,6 @@
         "branch": "Regression_master"
     },
     "jmeter": {
-        "jmx": "testScripts/VeSyncfitScale.jmx"
+        "jmx": "testScripts/CS108_Predeploy_V1.0.jmx"
     }
 }
