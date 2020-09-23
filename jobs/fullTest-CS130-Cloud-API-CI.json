@@ -4,6 +4,6 @@
         "branch": "Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/CS100.jmx"
+        "jmx": "testSripts/CS130.jmx"
     }
 }
