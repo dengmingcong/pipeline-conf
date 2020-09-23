@@ -10,7 +10,7 @@ def JENKINS_CONF_CONTENT = ""
 def ENV_MAP = [
 	ci: [label: "fullTest", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git"],
 	testonline: [label: "Predeploy-smokeTest", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git"], 
-	predeploy: [lebel: "Predeploy-smokeTest", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git"]
+	predeploy: [label: "Predeploy-smokeTest", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git"]
 ]
 
 
@@ -32,6 +32,10 @@ node {
 	    def jsonSlurper = new JsonSlurper()
 		def jenkinsConf = jsonSlurper.parseText(JENKINS_CONF_CONTENT)
 		AGENT_LABEL = ENV_MAP[jenkinsConf.env]['label']
+		if (AGENT_LABEL == null) {
+			echo "Value of 'env' in job configuration can only choose from 'ci', 'testonline', or 'predeploy'."
+			sh "exit 1"
+		}
 		echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
 	}
 }
