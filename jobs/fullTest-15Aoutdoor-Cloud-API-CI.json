@@ -4,6 +4,6 @@
         "branch": "Yukin"
     },
     "jmeter": {
-        "jmx": "testSripts/15Aoutdoor_V1.0.jmx"
+        "jmx": "testSripts/15Aoutdoor.jmx"
     }
 }
