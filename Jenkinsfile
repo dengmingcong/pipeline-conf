@@ -74,7 +74,7 @@ node(AGENT_LABEL) {
 	
 	stage("Pre-Build") {
 		echo "Getting codes (jmx, csv and so on) ..."
-		checkout([$class: 'GitSCM', branches: [[name: "*/${BUSINESS_REPO_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${BUSINESS_REPO_URL}"]]])
+		checkout([$class: 'GitSCM', branches: [[name: "*/${BUSINESS_REPO_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${BUSINESS_REPO_URL}"]]])
 		
 		echo "Downloading Python scripts, sample build.xml, xslt, and other dependencies..."
 		sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_EXTRAS_DIR} | (tar xf - && cp -r ${JENKINS_EXTRAS_DIR}/* . && rm -rf ${JENKINS_EXTRAS_DIR})"
@@ -92,8 +92,8 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Publish HTML Reports") {
-		publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '', reportFiles: "${TEST_NAME}_summary.html", reportName: "${TEST_NAME}_summary", reportTitles: "${TEST_NAME}_summary"])
-		publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'reports', reportFiles: "${TEST_NAME}_detail.html", reportName: "${TEST_NAME}_detail", reportTitles: "${TEST_NAME}_detail"])
+		publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '', reportFiles: "${TEST_NAME}_summary.html", reportName: "${TEST_NAME}_summary", reportTitles: "${TEST_NAME}_summary"])
+		publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'reports', reportFiles: "${TEST_NAME}_detail.html", reportName: "${TEST_NAME}_detail", reportTitles: "${TEST_NAME}_detail"])
 	}
 	
 	stage("Mark Unstable") {
