@@ -95,7 +95,7 @@ def save_as_regression(src, env):
 
 def read_list():
     list = []
-    f = open("list.txt")
+    f = open("thirdpart.txt")
     lines = f.readlines()
 
     for line in lines:
@@ -116,11 +116,11 @@ def edit_file():
             if filename.startswith("fullTest") and filename.endswith("CI.json"):
                 list = read_list()
                 if filename in list:
-                    save_as_testonline(filename, "testonline")
-                    save_as_testonline(filename, "predeploy")
+                    # save_as_testonline(filename, "testonline")
+                    # save_as_testonline(filename, "predeploy")
                     save_as_regression(filename, "ci")
-                    save_as_regression(filename, "testonline")
-                    save_as_regression(filename, "predeploy")
+                    # save_as_regression(filename, "testonline")
+                    # save_as_regression(filename, "predeploy")
 
 
 edit_file()

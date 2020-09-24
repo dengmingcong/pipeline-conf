@@ -1,0 +1,3 @@
+fullTest-GoogleCheryl-API-CI
+fullTest-AlexaCheryl-API-CI
+fullTest-IFTTTCheryl-API-CI
