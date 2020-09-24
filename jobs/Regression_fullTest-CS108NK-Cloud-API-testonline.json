@@ -1,0 +1,9 @@
+{
+    "env": "testonline",
+    "git": {
+        "branch": "Regression_master"
+    },
+    "jmeter": {
+        "jmx": "testScripts/CS108NK.jmx"
+    }
+}
