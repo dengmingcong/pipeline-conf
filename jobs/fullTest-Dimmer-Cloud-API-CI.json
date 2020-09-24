@@ -1,0 +1,9 @@
+{
+    "env": "ci",
+    "git": {
+        "branch": "Cheryl"
+    },
+    "jmeter": {
+        "jmx": "testSripts/dimmer.jmx"
+    }
+}
