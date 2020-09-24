@@ -50,7 +50,7 @@
             classpathref="xslt.classpath"
             force="true"
             in="${project.root.dir}/${test}.jtl"
-            out="${project.root.dir}/${test}_summary.html"
+            out="${project.root.dir}/reports/${test}_summary.html"
             style="${jmeter.home}/extras/jmeter-results-detail-report_21.xsl">
             <param name="titleReport" expression="${report.title}"/>
             <param name="dateReport" expression="${report.datestamp}"/>
@@ -68,8 +68,8 @@
 
     <!-- Copy report images if needed -->
     <target name="copy-images">
-        <copy file="${jmeter.home}/extras/expand.png" tofile="${project.root.dir}/expand.png"/>
-        <copy file="${jmeter.home}/extras/collapse.png" tofile="${project.root.dir}/collapse.png"/>
+        <copy file="${jmeter.home}/extras/expand.png" tofile="${project.root.dir}/reports/expand.png"/>
+        <copy file="${jmeter.home}/extras/collapse.png" tofile="${project.root.dir}/reports/collapse.png"/>
     </target>
 
 
