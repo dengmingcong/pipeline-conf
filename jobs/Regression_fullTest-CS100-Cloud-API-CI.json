@@ -4,6 +4,6 @@
         "branch": "Regression_Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/CS100_V1.0.jmx"
+        "jmx": "testSripts/CS100.jmx"
     }
 }

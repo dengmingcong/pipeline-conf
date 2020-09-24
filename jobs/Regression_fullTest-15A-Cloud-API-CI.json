@@ -4,6 +4,6 @@
         "branch": "Regression_Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/WIFI_Outlet15AUS_V1.0.jmx"
+        "jmx": "testSripts/15AUS.jmx"
     }
 }

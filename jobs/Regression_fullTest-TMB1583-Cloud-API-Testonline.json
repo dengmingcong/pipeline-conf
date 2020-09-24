@@ -4,6 +4,6 @@
         "branch": "Regression_master"
     },
     "jmeter": {
-        "jmx": "testScripts/TMB1583BS_Testonline_V1.0.jmx"
+        "jmx": "testScripts/TMB1583.jmx"
     }
 }

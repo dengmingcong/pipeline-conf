@@ -4,6 +4,6 @@
         "branch": "Regression_Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/WIFI_CCT_V1.0.jmx"
+        "jmx": "testSripts/CCT.jmx"
     }
 }

@@ -4,6 +4,6 @@
         "branch": "Regression_Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/SmartBulb_V1.0.jmx"
+        "jmx": "testSripts/SmartBulb.jmx"
     }
 }
