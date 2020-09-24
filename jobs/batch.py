@@ -123,4 +123,24 @@ def edit_file():
                     # save_as_regression(filename, "predeploy")
 
 
+
+def batch_update_filename():
+    """
+    批量修改当前路径下的文件名
+    :return:
+    """
+    for parent, dirnames, filenames in os.walk(dirpath):
+        for filename in filenames:
+            # 获取当前路径下以fullTest开头和CI.json结尾的文件
+            if filename.endswith("testonline.json"):
+                newname = filename.replace('testonline', 'Testonline')
+                os.rename(os.path.join(dirpath, filename), os.path.join(dirpath, newname))
+                print('success : ' + newname)
+            if filename.endswith("predeploy.json"):
+                newname = filename.replace("predeploy", "Predeploy")
+                os.rename(os.path.join(dirpath, filename), os.path.join(dirpath, newname))
+                print('success : ' + newname)
+
+
 edit_file()
+# batch_update_filename()
