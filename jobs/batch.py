@@ -113,11 +113,9 @@ def save_as_thirdpart(src, env):
 
 def save_as_third_regression(src, env):
     """
-     1、修改以fullTest开头和CI.json结尾的文件内容；
-        --如果env = CI，则将branch分支修改为Regression_xxxx
-        --如果env != CI，则将branch分支修改为Regression_master，将testSripts修改成testScripts
-    2、如果env != CI，则将修改后的文件重命名为：Regression_xxxxx${env}.json
-       如果env == CI，则将修改后的文件重命名为：Regression_xxxxCI.json
+     第三方回归文件；
+        如果env != Testonline，则将修改后的文件重命名为：Regression_xxxxx${env}.json
+        如果env == Testonline，则将修改后的文件重命名为：Regression_xxxxTestonline.json
 
     :param src:
     :param env:
