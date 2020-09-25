@@ -4,6 +4,6 @@
         "branch": "Regression_master"
     },
     "jmeter": {
-        "jmx": "testScripts/AlexaBulb.jmx"
+        "jmx": "testScripts/GooglehomeBulbUp.jmx"
     }
 }

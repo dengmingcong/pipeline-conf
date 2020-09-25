@@ -1,9 +1,9 @@
 {
-    "env": "testonline",
+    "env": "predeploy",
     "git": {
         "branch": "Regression_master"
     },
     "jmeter": {
-        "jmx": "testScripts/AlexaBulb.jmx"
+        "jmx": "testScripts/AlexaBulbUp.jmx"
     }
 }

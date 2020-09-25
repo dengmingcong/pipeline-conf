@@ -1,5 +1,5 @@
 {
-    "env": "testonline",
+    "env": "predeploy",
     "git": {
         "branch": "Regression_master"
     },
