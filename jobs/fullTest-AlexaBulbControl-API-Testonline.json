@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/Springboot_AlexaBulb_V1.0.jmx"
+        "jmx": "testScripts/AlexaBulb.jmx"
     }
 }

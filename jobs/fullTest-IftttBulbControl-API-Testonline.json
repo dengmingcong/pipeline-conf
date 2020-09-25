@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/Springboot_IftttBulb_V1.0.jmx"
+        "jmx": "testScripts/IftttBulb.jmx"
     }
 }
