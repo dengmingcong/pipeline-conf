@@ -1,9 +1,0 @@
-{
-    "env": "predeploy",
-    "git": {
-        "branch": "Regression_master"
-    },
-    "jmeter": {
-        "jmx": "testScripts/7Auser_predeploy.jmx"
-    }
-}

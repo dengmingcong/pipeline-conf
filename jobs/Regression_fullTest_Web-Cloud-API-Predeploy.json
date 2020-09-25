@@ -1,9 +1,0 @@
-{
-    "env": "predeploy",
-    "git": {
-        "branch": "Regression_master"
-    },
-    "jmeter": {
-        "jmx": "testScripts/WiFi_web_Predeploy_V1.0.jmx"
-    }
-}
