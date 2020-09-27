@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/Googlehomereportcheryl.jmx"
+        "jmx": "testScripts/GooglehomeReportYukin.jmx"
     }
 }
