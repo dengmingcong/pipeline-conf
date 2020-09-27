@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/IFTTControlYukin.jmx"
+        "jmx": "testScripts/IFTTTControlYukin.jmx"
     }
 }
