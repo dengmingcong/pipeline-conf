@@ -4,6 +4,6 @@
         "branch": "Regression_Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/Springboot_AlexaBulb_V1.0.jmx"
+        "jmx": "testSripts/AlexaBulb.jmx"
     }
 }
