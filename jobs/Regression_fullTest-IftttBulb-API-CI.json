@@ -4,6 +4,6 @@
         "branch": "Regression_Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/IFTTT_V1.0.jmx"
+        "jmx": "testSripts/IFTTT.jmx"
     }
 }
