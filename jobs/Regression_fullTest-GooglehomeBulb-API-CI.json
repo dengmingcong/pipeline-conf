@@ -4,6 +4,6 @@
         "branch": "Regression_Lilian"
     },
     "jmeter": {
-        "jmx": "testSripts/Googlehome.jmx"
+        "jmx": "testSripts/GooglehomeBulb.jmx"
     }
 }
