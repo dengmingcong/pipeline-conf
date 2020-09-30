@@ -12,7 +12,7 @@
                 html, body { width: 100%; height: 100%; font-size: 12px; overflow: hidden; }
                 .hidden {display: none}
                 
-                #left-panel { position: absolute; left: 0; top: 0; bottom: 0; width: 500px; overflow: auto; border-right: 1px solid #bbbbc3; }
+                #left-panel { position: absolute; left: 0; top: 0; bottom: 0; width: 300px; overflow: auto; border-right: 1px solid #bbbbc3; float: left }
                 #left-panel ul { padding-left: 20px; line-height: 20px; list-style-type: none; white-space: nowrap; }
                 #left-panel .folder-icon, #left-panel .sampler-icon { height: 1.2em; width: 1.2em; padding-right: 0.2em; display: inline-block; position: relative; top: 0.2em; }
                 #left-panel .collapsed .elbow-end-minus { background: transparent url('arrows.gif') no-repeat 0 0; }
@@ -26,7 +26,7 @@
                 #left-panel .expand-collpase-buttons { padding-left: 20px; padding-top: 10px; }
                 #left-panel .expand-tree, .collapse-tree { font-size: 0.8em; margin-right: 5px; }
                 
-                #right-panel { position: absolute; left: 500px; right: 0; top: 0; bottom: 0; overflow: auto; background: white }
+                #right-panel { position: absolute; left: 301px; right: 0; top: 0; bottom: 0; overflow: hidden; background: white }
                 #right-panel .group { font-size: 14px; font-weight: bold; line-height: 20px; counter-reset: assertion; background-color: #3c4ca970; color: #2b4dad; }
                 #right-panel table { table-layout: fixed; width: 100%; border: none; border-collapse: collapse; white-space: break-spaces; }
                 #right-panel tbody.failure { color: red }
@@ -43,6 +43,15 @@
                 // #right-panel tbody tr th.assertion:before { counter-increment: assertion; content: counter(assertion) ". " }
                 // #right-panel tbody tr th.assertion { color: black }
                 #right-panel .trail { border-top: 1px solid #b4b4b4 }
+				
+				#resize-save {position: absolute;top: 0; right: 5px; bottom: 0; left: 0;padding: 16px;overflow-x: hidden;}
+				#resize-bar { width: 200px; height: inherit;resize: horizontal;cursor: ew-resize;cursor: col-resize;opacity: 0;overflow: scroll;}
+				
+				/* 拖拽线 */
+				#resize-line {position: absolute;right: 0; top: 0; bottom: 0;border-right: 2px solid #eee;border-left: 1px solid #bbb;pointer-events: none;}
+				.resize-bar:hover ~ .resize-line
+				.resize-bar:active ~ .resize-line {border-left: 1px dashed skyblue;}				
+				.resize-bar::-webkit-scrollbar {width: 200px; height: inherit;}
                 
                 .all-passed { color: green; font-size: 2rem; padding: 2em;}
                 
@@ -171,6 +180,8 @@
                     <button class="expand-tree">Expand Tree</button>
                     <button class="collapse-tree">Collapse Tree</button>
                 </div>
+				<div class="resize-bar"></div>
+				<div class="resize-line"></div>
                 <ul id="result-list">
                 <xsl:for-each-group select="sample | httpSample" group-by="@tn">
                     <xsl:sort select="replace(@tn, '.* (\d+)-\d+$', '$1')"/>
