@@ -180,8 +180,8 @@
                     <button class="expand-tree">Expand Tree</button>
                     <button class="collapse-tree">Collapse Tree</button>
                 </div>
-				<div class="resize-bar"></div>
-				<div class="resize-line"></div>
+				<div id="resize-bar"></div>
+				<div id="resize-line"></div>
                 <ul id="result-list">
                 <xsl:for-each-group select="sample | httpSample" group-by="@tn">
                     <xsl:sort select="replace(@tn, '.* (\d+)-\d+$', '$1')"/>
