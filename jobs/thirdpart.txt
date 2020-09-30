@@ -1,6 +1,4 @@
-fullTest-AlexaControlCheryl-API-Testonline
-fullTest-AlexaReportCheryl-API-Testonline
-fullTest-GooglehomeControlCheryl-API-Testonline
-fullTest-GooglehomeReportCheryl-API-Testonline
-fullTest-IFTTTControlCheryl-API-Testonline
-fullTest-IFTTTReportCheryl-API-Testonline
+fullTest-AlexaControlHeby-API-Testonline
+fullTest-AlexaReportHeby-API-Testonline
+fullTest-GooglehomeControlHeby-API-Testonline
+fullTest-GooglehomeReportHeby-API-Testonline
