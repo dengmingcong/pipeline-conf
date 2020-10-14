@@ -102,5 +102,6 @@ node(AGENT_LABEL) {
 	
 	stage("Mark Unstable") {
 		sh "[[ `grep -c '<failure>true</failure>' ${PROJECT_ROOT_DIR}/${TEST_NAME}.jtl` == 0 ]]"
+		sh "[[ `grep -c 's="false"' ${PROJECT_ROOT_DIR}/${TEST_NAME}.jtl` == 0 ]]"
 	}
 }
