@@ -1,46 +1,34 @@
 #!/bin/bash/groovy
 import groovy.json.JsonSlurper
 
-def AGENT_LABEL = ""
-def JENKINS_CONF_REPO_URL = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
-def JENKINS_CONF_REPO_BRANCHE = "master"
-def JENKINS_CONF_DIR = "jobs"
-def JENKINS_EXTRAS_DIR = "extras"
-def JENKINS_CONF_CONTENT = ""
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '5')), disableConcurrentBuilds(), gitLabConnection('')])
+
 def ENV_MAP = [
 	ci: [label: "fullTest", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git"],
 	testonline: [label: "Predeploy-smokeTest", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git"], 
 	predeploy: [label: "Predeploy-smokeTest", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git"]
 ]
-
-
-node {
-	stage("Get Jenkins Conf File") {
-		echo "Try to get configuration file from repository ${JENKINS_CONF_REPO_URL}"
-		try {
-			sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json | (tar xf - && mv ${JENKINS_CONF_DIR}/${JOB_NAME}.json . && rm -rf ${JENKINS_CONF_DIR})"
-		} catch (Exception e) {
-			echo "Configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json does not exist in: repository ${JENKINS_CONF_REPO_URL}, branch ${JENKINS_CONF_REPO_BRANCHE}"
-  	  		sh "exit 1"
-		}
-		echo "Got configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json"
-		JENKINS_CONF_CONTENT = readFile(encoding: 'utf-8', file: "${env.JOB_NAME}.json")
-		echo JENKINS_CONF_CONTENT
-	}
-	
-	stage("Allocate Agent") {
-	    def jsonSlurper = new JsonSlurper()
-		def jenkinsConf = jsonSlurper.parseText(JENKINS_CONF_CONTENT)
-		AGENT_LABEL = ENV_MAP[jenkinsConf.env]['label']
-		if (AGENT_LABEL == null) {
-			echo "Value of 'env' in job configuration can only choose from 'ci', 'testonline', or 'predeploy'."
-			sh "exit 1"
-		}
-		echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
-	}
+def jobNameLowerCase = env.JOB_NAME.toLowerCase()
+def envFromJobName = ""
+if (jobNameLowerCase.endsWith("ci")) {
+	envFromJobName = "ci"
+} else if (jobNameLowerCase.endsWith("testonline")) {
+	envFromJobName = "testonline"
+} else if (jobNameLowerCase.endsWith("predeploy")) {
+	envFromJobName = "predeploy"
+} else {
+	echo "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
+	currentBuild.result = 'FAILURE'
 }
+def AGENT_LABEL = ENV_MAP[envFromJobName]['label']
+echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
 
 node(AGENT_LABEL) {
+	def JENKINS_CONF_REPO_URL = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
+	def JENKINS_CONF_REPO_BRANCHE = "dev"
+	def JENKINS_CONF_DIR = "jobs"
+	def JENKINS_EXTRAS_DIR = "extras"
+	def JENKINS_CONF_CONTENT = ""
 	def BUSINESS_REPO_URL = ""
 	def BUSINESS_REPO_BRANCH = ""
 	
@@ -54,6 +42,19 @@ node(AGENT_LABEL) {
 	def PROPERTY_FILES = ""
 	def TEST_NAME = env.JOB_NAME
 	
+	stage("Get Jenkins Conf File") {
+		echo "Try to get configuration file from repository ${JENKINS_CONF_REPO_URL}"
+		try {
+			sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json | (tar xf - && mv ${JENKINS_CONF_DIR}/${JOB_NAME}.json . && rm -rf ${JENKINS_CONF_DIR})"
+		} catch (Exception e) {
+			echo "Configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json does not exist in: repository ${JENKINS_CONF_REPO_URL}, branch ${JENKINS_CONF_REPO_BRANCHE}"
+  	  		sh "exit 1"
+		}
+		echo "Got configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json"
+		JENKINS_CONF_CONTENT = readFile(encoding: 'utf-8', file: "${env.JOB_NAME}.json")
+		echo JENKINS_CONF_CONTENT
+	}
+	
 	stage("Set Variables") {
 	    def jsonSlurper = new JsonSlurper()
 		def jenkinsConf = jsonSlurper.parseText(JENKINS_CONF_CONTENT)
@@ -61,7 +62,7 @@ node(AGENT_LABEL) {
 		if (jenkinsConf.git.containsKey("url") && jenkinsConf.git.url) {
 			BUSINESS_REPO_URL = jenkinsConf.git.url
 		} else {
-			BUSINESS_REPO_URL = ENV_MAP[jenkinsConf.env]['businessRepoUrl']
+			BUSINESS_REPO_URL = ENV_MAP[envFromJobName]['businessRepoUrl']
 		}
 		BUSINESS_REPO_BRANCH = jenkinsConf.git.branch
 		echo "Git repository URL: ${BUSINESS_REPO_URL}"
