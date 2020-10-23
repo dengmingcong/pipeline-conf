@@ -1,0 +1,8 @@
+{
+    "git": {
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testScript/CN_Common_V1.0.jmx"
+    }
+}
