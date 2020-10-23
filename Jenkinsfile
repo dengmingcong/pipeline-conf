@@ -32,6 +32,7 @@ node(AGENT_LABEL) {
 	def BUSINESS_REPO_URL = ""
 	def BUSINESS_REPO_BRANCH = ""
 	
+	def ANT_HOME = tool name: 'ant-1.10.8', type: 'ant'
 	def JMETER_HOME = "/data/jenkins_data/jmeter40"
 	def PROJECT_ROOT_DIR = env.WORKSPACE
 	def CUSTOMIZE_BUILD_XML_PY = "bin/customize_build_xml.py"
@@ -40,8 +41,6 @@ node(AGENT_LABEL) {
 	def JMX = ""
 	def PROPERTY_FILES = ""
 	def TEST_NAME = env.JOB_NAME
-	
-	tool name: 'ant-1.10.8', type: 'ant'
 	
 	stage("Get Jenkins Conf File") {
 		echo "Try to get configuration file from repository ${JENKINS_CONF_REPO_URL}"
@@ -94,7 +93,7 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Ant Build") {
-		sh "ant -file ${OUTPUT_BUILD_XML}"
+		sh "${ANT_HOME}/ant -file ${OUTPUT_BUILD_XML}"
 	}
 	
 	stage("Publish HTML Reports") {
