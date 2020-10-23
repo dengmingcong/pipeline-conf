@@ -93,7 +93,7 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Ant Build") {
-		sh "${ANT_HOME}/ant -file ${OUTPUT_BUILD_XML}"
+		sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML}"
 	}
 	
 	stage("Publish HTML Reports") {
