@@ -90,6 +90,9 @@ node(AGENT_LABEL) {
 		
 		echo "Generating customized build.xml.."
 		sh "python3 ${CUSTOMIZE_BUILD_XML_PY} ${SAMPLE_BUILD_XML} ${OUTPUT_BUILD_XML} ${PROJECT_ROOT_DIR} ${JMETER_HOME} ${JMX} ${TEST_NAME} -p ${PROPERTY_FILES}"
+		
+		echo "Copy groovy scripts to JMeter home.."
+		sh "cp bin/poll.groovy ${JMETER_HOME}/bin/"
 	}
 	
 	stage("Ant Build") {
