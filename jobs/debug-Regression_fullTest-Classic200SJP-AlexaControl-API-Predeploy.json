@@ -1,0 +1,10 @@
+{
+    "env": "predeploy",
+    "git": {
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testplans/AirHumidifier/Classic200S_JP_Alexa/Classic200SJPAlexaControl.jmx",
+        "properties": "testplans/AirHumidifier/Classic200S_JP_Alexa/predeploy.properties"
+    }
+}

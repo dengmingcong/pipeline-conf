@@ -1,0 +1,9 @@
+{
+    "env": "testonline",
+    "git": {
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testScripts/GooglehomeControlYukin.jmx"
+    }
+}

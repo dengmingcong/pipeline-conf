@@ -1,0 +1,9 @@
+{
+    "env": "predeploy",
+    "git": {
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testScripts/FitnessTracker.jmx"
+    }
+}

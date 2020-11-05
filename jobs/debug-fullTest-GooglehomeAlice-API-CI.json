@@ -1,0 +1,9 @@
+{
+    "env": "ci",
+    "git": {
+        "branch": "Heby"
+    },
+    "jmeter": {
+        "jmx": "testSripts/GooglehomeAlice.jmx"
+    }
+}

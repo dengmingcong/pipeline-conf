@@ -1,0 +1,9 @@
+{
+    "git": {
+        "branch": "Raigor"
+    },
+    "jmeter": {
+        "jmx": "testplans/AirHumidifier/Classic200S_JP_GoogleHome/classic200s-jp-googlehome.jmx",
+        "properties": "testplans/AirHumidifier/Classic200S_JP_GoogleHome/ci.properties"
+    }
+}

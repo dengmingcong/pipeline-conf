@@ -1,0 +1,11 @@
+{
+    "env": "ci",
+    "git": {
+        "url": "git@fangcun.vesync.com:testTeam/cloud-api-test.git",
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testplans/AirPurifier/Core400SUSLink/Core400SUSLink.jmx",
+        "properties": "testplans/ci.properties"
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "git": {
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testplans/AirHumidifier/Classic200sJPGoogleHome/Humidifier200sJPGoogleHomeControl.jmx",
+        "properties": "testplans/AirHumidifier/Classic200sJPGoogleHome/predeploy.properties"
+    }
+}

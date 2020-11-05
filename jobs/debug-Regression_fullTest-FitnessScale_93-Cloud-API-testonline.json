@@ -1,0 +1,9 @@
+{
+    "env": "testonline",
+    "git": {
+        "branch": "Regression_master"
+    },
+    "jmeter": {
+        "jmx": "testScripts/FitnessScale_93_V1.0.jmx"
+    }
+}

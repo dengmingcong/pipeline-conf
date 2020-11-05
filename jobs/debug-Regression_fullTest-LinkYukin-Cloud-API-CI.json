@@ -1,0 +1,9 @@
+{
+    "env": "ci",
+    "git": {
+        "branch": "Regression_Yukin"
+    },
+    "jmeter": {
+        "jmx": "testSripts/link_yukin.jmx"
+    }
+}

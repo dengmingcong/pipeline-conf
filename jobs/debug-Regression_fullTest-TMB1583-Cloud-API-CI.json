@@ -1,0 +1,9 @@
+{
+    "env": "ci",
+    "git": {
+        "branch": "Regression_Lilian"
+    },
+    "jmeter": {
+        "jmx": "testSripts/TMB1583.jmx"
+    }
+}
