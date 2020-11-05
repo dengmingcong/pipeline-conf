@@ -1,0 +1,9 @@
+{
+    "git": {
+        "branch": "Raigor"
+    },
+    "jmeter": {
+        "jmx": "testplans/AirHumidifier/Classic200S_JP_Alexa/Classic200SJPAlexa.jmx",
+        "properties": "testplans/AirHumidifier/Classic200S_JP_Alexa/ci.properties"
+    }
+}
