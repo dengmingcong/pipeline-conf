@@ -4,6 +4,6 @@
         "branch": "Cheryl"
     },
     "jmeter": {
-        "jmx": "testSripts/AG500.jmx"
+        "jmx": "testSripts/AG500Google.jmx"
     }
 }
