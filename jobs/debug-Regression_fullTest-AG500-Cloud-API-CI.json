@@ -1,7 +1,7 @@
 {
     "env": "ci",
     "git": {
-        "branch": ""Regression_Cheryl"
+        "branch": "Regression_Cheryl"
     },
     "jmeter": {
         "jmx": "testSripts/AG500Google.jmx"
