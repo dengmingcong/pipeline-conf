@@ -92,11 +92,13 @@ node(AGENT_LABEL) {
 		sh "python3 ${CUSTOMIZE_BUILD_XML_PY} ${SAMPLE_BUILD_XML} ${OUTPUT_BUILD_XML} ${PROJECT_ROOT_DIR} ${JMETER_HOME} ${JMX} ${TEST_NAME} -p ${PROPERTY_FILES}"
 		
 		echo "Copy groovy scripts to JMeter home.."
-		sh "cp bin/poll.groovy ${JMETER_HOME}/bin/"
+		sh "cp bin/*.groovy ${JMETER_HOME}/bin/"
 	}
 	
 	stage("Ant Build") {
-		sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML}"
+		timeout(15) {
+			sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML}"
+		}
 	}
 	
 	stage("Publish HTML Reports") {
