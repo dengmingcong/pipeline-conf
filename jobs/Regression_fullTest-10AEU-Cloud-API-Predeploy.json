@@ -1,7 +1,7 @@
 {
     "env": "predeploy",
     "git": {
-        "branch": "Regression_master"
+        "branch": "master"
     },
     "jmeter": {
         "jmx": "testScripts/10AEU.jmx"
