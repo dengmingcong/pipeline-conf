@@ -1,4 +1,5 @@
-fullTest-AlexaControlHeby-API-Testonline
-fullTest-AlexaReportHeby-API-Testonline
-fullTest-GooglehomeControlHeby-API-Testonline
-fullTest-GooglehomeReportHeby-API-Testonline
+debug-Regression_fullTest-3way-Cloud-API-Predeploy
+debug-Regression_fullTest-10Acostdown-Cloud-API-Predeploy
+debug-Regression_fullTest-10AEU-Cloud-API-Predeploy
+debug-Regression_fullTest-10AUS-Cloud-API-Predeploy
+debug-Regression_fullTest-15Aoutdoor-Cloud-API-Predeploy
