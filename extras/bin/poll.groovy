@@ -1,7 +1,7 @@
 import static com.jayway.jsonpath.JsonPath.parse
 
 timeout = 10000;
-interval = 400;
+interval = 500;
 count = (timeout / interval).intValue();
 rangeRetry = 1..count;
 
@@ -165,3 +165,5 @@ def poll() {
 }
 
 poll()
+sleep(interval)
+log.info("Sleeped ${interval} milliseconds before sending new request.")
