@@ -43,20 +43,22 @@ node(AGENT_LABEL) {
 	def TEST_NAME = env.JOB_NAME
 	
 	stage("Get Jenkins Conf File") {
-		echo "Try to get configuration file from repository ${JENKINS_CONF_REPO_URL} (Timeout: 1 min)"
+		echo "Try to get configuration file from repository ${JENKINS_CONF_REPO_URL} (Timeout: 1 min, Set retry: 5 times)"
 		
-		timeout(1) {
-			try {
-				sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json | (tar xf - && mv ${JENKINS_CONF_DIR}/${JOB_NAME}.json . && rm -rf ${JENKINS_CONF_DIR})"
-			} catch (Exception e) {
-				echo "Configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json does not exist in: repository ${JENKINS_CONF_REPO_URL}, branch ${JENKINS_CONF_REPO_BRANCHE}"
-				sh "exit 1"
+		retry(5) {
+			timeout(1) {
+				try {
+					sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json | (tar xf - && mv ${JENKINS_CONF_DIR}/${JOB_NAME}.json . && rm -rf ${JENKINS_CONF_DIR})"
+				} catch (Exception e) {
+					echo "Configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json does not exist in: repository ${JENKINS_CONF_REPO_URL}, branch ${JENKINS_CONF_REPO_BRANCHE}, or timeout error catched."
+					sh "exit 1"
+				}
 			}
-		}
 
-		echo "Got configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json"
-		JENKINS_CONF_CONTENT = readFile(encoding: 'utf-8', file: "${env.JOB_NAME}.json")
-		echo JENKINS_CONF_CONTENT
+			echo "Got configuration file ${JENKINS_CONF_DIR}/${env.JOB_NAME}.json"
+			JENKINS_CONF_CONTENT = readFile(encoding: 'utf-8', file: "${env.JOB_NAME}.json")
+			echo JENKINS_CONF_CONTENT
+		}
 	}
 	
 	stage("Set Variables") {
@@ -82,22 +84,28 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Pre-Build") {
-		timeout(5) {
-			echo "Getting codes (jmx, csv and so on) ..."
-			checkout([$class: 'GitSCM', branches: [[name: "*/${BUSINESS_REPO_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${BUSINESS_REPO_URL}"]]])
-			
-			echo "Downloading Python scripts, sample build.xml, xslt, and other dependencies..."
-			sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_EXTRAS_DIR} | (tar xf - && cp -r ${JENKINS_EXTRAS_DIR}/* . && rm -rf ${JENKINS_EXTRAS_DIR})"
-			
-			echo "Converting simple controller to transaction controller..."
-			sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
-			sh "cd ${PROJECT_ROOT_DIR}; [[ -d reports ]] || mkdir reports; python3 bin/simple_controller_to_transaction_controller.py ${JMX} ${JMX}; cp resources/img/* reports"
-			
-			echo "Generating customized build.xml.."
-			sh "python3 ${CUSTOMIZE_BUILD_XML_PY} ${SAMPLE_BUILD_XML} ${OUTPUT_BUILD_XML} ${PROJECT_ROOT_DIR} ${JMETER_HOME} ${JMX} ${TEST_NAME} -p ${PROPERTY_FILES}"
-			
-			echo "Copy groovy scripts to JMeter home.."
-			sh "cp bin/*.groovy ${JMETER_HOME}/bin/"
+		retry(5) {
+			try {
+				timeout(2) {
+					echo "Getting codes (jmx, csv and so on) ..."
+					checkout([$class: 'GitSCM', branches: [[name: "*/${BUSINESS_REPO_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${BUSINESS_REPO_URL}"]]])
+					
+					echo "Downloading Python scripts, sample build.xml, xslt, and other dependencies..."
+					sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_EXTRAS_DIR} | (tar xf - && cp -r ${JENKINS_EXTRAS_DIR}/* . && rm -rf ${JENKINS_EXTRAS_DIR})"
+					
+					echo "Converting simple controller to transaction controller..."
+					sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
+					sh "cd ${PROJECT_ROOT_DIR}; [[ -d reports ]] || mkdir reports; python3 bin/simple_controller_to_transaction_controller.py ${JMX} ${JMX}; cp resources/img/* reports"
+					
+					echo "Generating customized build.xml.."
+					sh "python3 ${CUSTOMIZE_BUILD_XML_PY} ${SAMPLE_BUILD_XML} ${OUTPUT_BUILD_XML} ${PROJECT_ROOT_DIR} ${JMETER_HOME} ${JMX} ${TEST_NAME} -p ${PROPERTY_FILES}"
+					
+					echo "Copy groovy scripts to JMeter home.."
+					sh "cp bin/*.groovy ${JMETER_HOME}/bin/"
+				}
+			} catch (Exception e) {
+				error "Timeout"
+			}
 		}
 	}
 	
