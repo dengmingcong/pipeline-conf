@@ -20,7 +20,9 @@ def isExpectedResponseJson(String responseAsString, Map checkPoints) {
     try {
         jsonObject = parse(responseAsString);
     } catch(e) {
-        responseHistory += "The response string cannot be parsed as json objcet.\n";
+        responseHistory += """\
+		* Error message
+		The response string cannot be parsed as json objcet.\n\n""".stripIndent();
         return false
     }
 
@@ -29,19 +31,25 @@ def isExpectedResponseJson(String responseAsString, Map checkPoints) {
         try {
             valueOfResponse = jsonObject.read(key);
         } catch(e) {
-            responseHistory += "Json path does not exist in response: ${key}\n"
+            responseHistory += """\
+			* Error message
+			Json path does not exist in response: ${key}\n\n""".stripIndent()
             return true
         }
         
         if (valueOfResponse != value) {
-            responseHistory += "Value to this json path is incorrect. json path: ${key}, expected value: ${value}, got value: ${valueOfResponse}\n"
+            responseHistory += """\
+			* Error message
+			Value to this json path is incorrect. json path: ${key}, expected value: ${value}, got value: ${valueOfResponse}\n\n""".stripIndent()
             return true
         }
     }) {
         return false
     }
 
-    responseHistory += "All these json path exist, and values are correct: ${checkPoints}\n"
+    responseHistory += """\
+	* Success message
+	All these json path exist, and values are correct: ${checkPoints}\n\n""".stripIndent()
     return true
 }
 
@@ -56,11 +64,17 @@ def isExpectedResponseJsonAfterPoll(Map checkPoints) {
             response = prev.getResponseDataAsString();
         } else {
             sleep(interval)
-            responseHistory += "Sleeped ${interval} milliseconds.\n"
+            responseHistory += """\
+			* Delay
+			Sleeped ${interval} milliseconds.\n\n""".stripIndent()
             response = sampler.sample().getResponseDataAsString();
         }
         response = response.replaceAll("\\\\", "");
-        responseHistory += "${i}, response: ${response}\n"
+        responseHistory += """\
+		# ${i} / ${count}
+				
+		* Response
+		${response}\n\n""".stripIndent()
         log.info("Tried ${i} times, Response: ${response}");
         
         if (isExpectedResponseJson(response, checkPoints)) {
@@ -82,14 +96,18 @@ def isExpectedResponseString(String responseAsString, List checkPoints) {
     // Find check point (as a string) which was not contained in response string.
     if (checkPoints.any { item ->
         if (!responseAsString.contains(item)) {
-            responseHistory += "The response string does not contain sub string: ${item}\n"
+            responseHistory += """\
+			* Error message
+			The response string does not contain sub string: ${item}\n\n""".stripIndent()
             return true
         }
     }) {
         return false
     }
 
-    responseHistory += "All check points ${checkPoints.join(", ")} exist in the response string\n"
+    responseHistory += """\
+	* Success message
+	All check points ${checkPoints.join(", ")} exist in the response string\n\n""".stripIndent()
     return true
 }
 
@@ -104,11 +122,17 @@ def isExpectedResponseStringAfterPoll(List checkPoints) {
             response = prev.getResponseDataAsString();
         } else {
             sleep(interval)
-            responseHistory += "Sleeped ${interval} milliseconds.\n"
+            responseHistory += """\
+			* Delay
+			Sleeped ${interval} milliseconds.\n\n""".stripIndent()
             response = sampler.sample().getResponseDataAsString();
         }
         response = response.replace("\\", "");
-        responseHistory += "${i}, response: ${response}\n"
+        responseHistory += """\
+		# ${i} / ${count}
+				
+		* Response
+		${response}\n\n""".stripIndent()
         log.info("Tried ${i} times, Response: ${response}");
         
         if (isExpectedResponseString(response, checkPoints)) {
@@ -135,7 +159,7 @@ def poll() {
     def checkPoints = Eval.me(Parameters)
     switch (checkPoints) {
         case Map:
-			responseHistory += "Parameters are evaluated as Map, response would be treated as JSON \n"
+			responseHistory += "Parameters are evaluated as Map, response would be treated as JSON.\n"
             if (isExpectedResponseJsonAfterPoll(checkPoints)) {
                 AssertionResult.setFailureMessage("${responseHistory}");
                 AssertionResult.setFailure(false);
@@ -147,11 +171,12 @@ def poll() {
             break        
 
         case List:
+			responseHistory += "Parameters are evaluated as List, response would be treated as literal string.\n"
             if (isExpectedResponseStringAfterPoll(checkPoints)) {
                 AssertionResult.setFailureMessage("${responseHistory}");
                 AssertionResult.setFailure(false);
             } else {
-                responseHistory += "retried ${count} times, all failed."
+                responseHistory += "Retried ${count} times, all failed."
                 AssertionResult.setFailureMessage("${responseHistory}");
                 AssertionResult.setFailure(true);
             }
