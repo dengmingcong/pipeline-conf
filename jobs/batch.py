@@ -162,6 +162,7 @@ def read_list():
         line = line.replace('\n', '')
         line = line + ".json"
         list.append(line)
+    # print("个数：", len(list))
     return list
 
 
@@ -174,10 +175,10 @@ def edit_file():
         for filename in filenames:
             # 获取当前路径下以fullTest开头和CI.json结尾的文件
             # if filename.startswith("fullTest") and filename.endswith("CI.json"):
-                if filename.endswith("Testonline.json"):
-                    list = read_list()
-                    if filename.lower() in list:
-                        print(filename)
+            #     if filename.endswith("Testonline.json"):
+            list = read_list()
+            if filename in list:
+                print(filename)
                         # 修改单品的文件
                         # save_as_testonline(filename, "Testonline")
                         # save_as_testonline(filename, "Predeploy")
@@ -188,10 +189,10 @@ def edit_file():
                         # 修改第三方的文件
                         # save_as_third_regression(filename, "Testonline")
                         # save_as_thirdpart(filename, "Predeploy")
-                        save_as_third_regression(filename, "Predeploy")
+                        # save_as_third_regression(filename, "Predeploy")
 
-                        # 修改 branch分支为指定分支，如Yukin或者master
-                        # save_as_master_branch(filename, "master")
+                # 修改 branch分支为指定分支，如Yukin或者master
+                save_as_master_branch(filename, "master")
 
 
 def batch_update_filename():

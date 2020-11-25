@@ -1,7 +1,7 @@
 {
     "env": "ci",
     "git": {
-        "branch": "Regression_Lilian"
+        "branch": "Lilian"
     },
     "jmeter": {
         "jmx": "testSripts/CS130.jmx"
