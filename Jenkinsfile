@@ -110,7 +110,7 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Ant Build") {
-		timeout(15) {
+		timeout(20) {
 			sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML}"
 		}
 	}
