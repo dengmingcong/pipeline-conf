@@ -1,0 +1,9 @@
+{
+
+    "git": {
+        "branch": "Nana"
+    },
+    "jmeter": {
+        "jmx": "testSripts/EmailSend_V1.0.jmx"
+    }
+}
