@@ -1,7 +1,7 @@
 {
     "env": "ci",
     "git": {
-        "branch": "Regression_Heby"
+        "branch": "Heby"
     },
     "jmeter": {
         "jmx": "testSripts/AirFryerEU.jmx"
