@@ -1,5 +1,4 @@
 {
-    "env": "ci",
     "git": {
         "branch": "Raigor"
     },
