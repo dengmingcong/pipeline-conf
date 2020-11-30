@@ -102,6 +102,9 @@ node(AGENT_LABEL) {
 					
 					echo "Copy groovy scripts to JMeter home.."
 					sh "cp bin/*.groovy ${JMETER_HOME}/bin/"
+					
+					echo "Copy lib to JMeter lib.."
+					sh "cp lib/jsonassert*.jar ${JMETER_HOME}/lib/"
 				}
 			} catch (Exception e) {
 				error "Timeout"
