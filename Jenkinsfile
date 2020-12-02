@@ -84,9 +84,9 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Pre-Build") {
-		retry(5) {
+		retry(2) {
 			try {
-				timeout(2) {
+				timeout(5) {
 					echo "Getting codes (jmx, csv and so on) ..."
 					checkout([$class: 'GitSCM', branches: [[name: "*/${BUSINESS_REPO_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${BUSINESS_REPO_URL}"]]])
 					
