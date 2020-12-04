@@ -88,7 +88,7 @@ node(AGENT_LABEL) {
 			try {
 				timeout(5) {
 					echo "Getting codes (jmx, csv and so on) ..."
-					checkout([$class: 'GitSCM', branches: [[name: "*/${BUSINESS_REPO_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${BUSINESS_REPO_URL}"]]])
+					checkout([$class: 'GitSCM', branches: [[name: "*/${BUSINESS_REPO_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'WipeWorkspace']], submoduleCfg: [], userRemoteConfigs: [[url: "${BUSINESS_REPO_URL}"]]])
 					
 					echo "Downloading Python scripts, sample build.xml, xslt, and other dependencies..."
 					sh "git archive --format=tar --remote=${JENKINS_CONF_REPO_URL} ${JENKINS_CONF_REPO_BRANCHE} ${JENKINS_EXTRAS_DIR} | (tar xf - && cp -r ${JENKINS_EXTRAS_DIR}/* . && rm -rf ${JENKINS_EXTRAS_DIR})"
