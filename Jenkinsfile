@@ -24,6 +24,9 @@ def AGENT_LABEL = ENV_MAP[envFromJobName]['label']
 echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
 
 node(AGENT_LABEL) {
+
+    echo sh(returnStdout: true, script: 'env')
+
 	def JENKINS_CONF_REPO_URL = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
 	def JENKINS_CONF_REPO_BRANCHE = "master"
 	def JENKINS_CONF_DIR = "jobs"
