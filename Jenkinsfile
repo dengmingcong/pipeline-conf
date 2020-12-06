@@ -46,7 +46,7 @@ node(AGENT_LABEL) {
     def BUSINESS_REPO_NAME = ""
     def BUSINESS_REPO_BRANCH = ""
 
-	stage("Set Node Environment Variables") {
+	stage("Assign JMeter Test Plan") {
         def jobConfFile = "${PIPELINE_CONF_DIR}/jobs/${env.JOB_NAME}.json"
         if (!fileExists(jobConfFile)) {
             error "Configuration file ${jobConfFile} does not exist."
