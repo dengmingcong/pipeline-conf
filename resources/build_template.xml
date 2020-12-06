@@ -6,7 +6,6 @@
     </description>
     
     <property name="jenkins.job.workspace" value=""/>
-    <property name="pipeline-conf.dir" value=""/>
     <property name="jmeter.home" value=""/>
     <property name="report.title" value="Load Test Results"/>
     

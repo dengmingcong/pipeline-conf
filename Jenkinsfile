@@ -13,7 +13,6 @@ JMETER_HOME = "/usr/local/jmeter40"
 QA_HOME = "/data/qa"
 PIPELINE_CONF_BRANCH = "deploy"
 PIPELINE_CONF_DIR = "${QA_HOME}/pipeline-conf/${PIPELINE_CONF_BRANCH}"
-JENKINS_JOB_WORKSPACE = env.WORKSPACE
 STAGE = ""
 AGENT_LABEL = ""
 
@@ -36,6 +35,7 @@ stage("Set Agent Label") {
 }
 
 node(AGENT_LABEL) {
+    def JENKINS_JOB_WORKSPACE = env.WORKSPACE
     def CUSTOMIZE_BUILD_XML_PY = "${PIPELINE_CONF_DIR}/bin/customize_build_xml.py"
     def SAMPLE_BUILD_XML = "${PIPELINE_CONF_DIR}/resources/build_template.xml"
     def OUTPUT_BUILD_XML = "${JENKINS_JOB_WORKSPACE}/build.xml"
@@ -52,7 +52,7 @@ node(AGENT_LABEL) {
             error "Configuration file ${jobConfFile} does not exist."
         }
 
-        echo readFile(encoding: 'utf-8', file: "${env.JOB_NAME}.json")
+        echo readFile(encoding: 'utf-8', file: jobConfFile)
         def jenkinsConf = readJSON file: jobConfFile
 		
 		BUSINESS_REPO_NAME = ENV_MAP[STAGE]['businessRepoName']
