@@ -48,6 +48,8 @@ node(AGENT_LABEL) {
 
 	stage("Assign JMeter Test Plan") {
         def jobConfFile = "${PIPELINE_CONF_DIR}/jobs/${env.JOB_NAME}.json"
+        echo "Jenkins job configuration file: ${jobConfFile}"
+        sh "hostname"
         if (!fileExists(jobConfFile)) {
             error "Configuration file ${jobConfFile} does not exist."
         }
