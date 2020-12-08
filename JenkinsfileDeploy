@@ -1,0 +1,107 @@
+#!/bin/bash/groovy
+
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '5')), disableConcurrentBuilds(), gitLabConnection('')])
+
+ENV_MAP = [
+	ci: [label: "fullTest", businessRepoName: "cloud-api-test", businessRepoUrl: "git@fangcun.vesync.com:testTeam/cloud-api-test.git", businessRepoBranches: ["master"]],
+	testonline: [label: "Predeploy-smokeTest", businessRepoName: "cloud-api-test", businessRepoUrl: "git@fangcun.vesync.com:testTeam/cloud-api-test.git", businessRepoBranches: ["master"]], 
+	predeploy: [label: "Predeploy-smokeTest", businessRepoName: "cloud-api-test", businessRepoUrl: "git@fangcun.vesync.com:testTeam/cloud-api-test.git", businessRepoBranches: ["master"]]
+]
+JMETER_HOME = "/usr/local/jmeter40"
+QA_HOME = "/data/qa"
+STAGE = ""
+AGENT_LABEL = ""
+BUSINESS_REPO_NAME = ""
+BUSINESS_REPO_URL = ""
+BUSINESS_REPO_BRANCHES = ""
+NODE_LIST = []
+
+/*
+** Determine test stage based on Jenkins job name.
+*/
+def parseJobName() {
+    def jobNameLowerCase = env.JOB_NAME.toLowerCase()
+
+    if (jobNameLowerCase.endsWith("ci")) {
+    	STAGE = "ci"
+    } else if (jobNameLowerCase.endsWith("testonline")) {
+    	STAGE = "testonline"
+    } else if (jobNameLowerCase.endsWith("predeploy")) {
+    	STAGE = "predeploy"
+    } else {
+    	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
+    }
+}
+
+/*
+** Pull from remote Git repository to the specified agent.
+** The remote repository will be pulled several times, each time to a directory named with branch if passed a list.
+*/
+def pull(String repoName, String repoUrl, branch, String label) {
+    echo "Begin to sync repository ${repoUrl}"
+    def localRepoDir = "${QA_HOME}/${repoName}"
+	
+	if (branch instanceof List) {
+		node(label) {
+			branch.each {
+				dstDir = "${localRepoDir}/${it}"
+				sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
+				echo "Pulling branch ${it} to directory ${dstDir}"
+				checkout([$class: 'GitSCM', branches: [[name: "${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+			}
+		}
+	} else if {branch instanceof String} {
+		node(label) {
+			dstDir = "${localRepoDir}"
+			sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
+			echo "Pulling branch ${branch} to directory ${dstDir}"
+			checkout([$class: 'GitSCM', branches: [[name: "${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+		}
+	}
+}
+
+stage("Set Environment Variables") {
+    parseJobName()
+
+    AGENT_LABEL = ENV_MAP[STAGE]['label']
+    echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
+
+    BUSINESS_REPO_NAME = ENV_MAP[STAGE]["businessRepoName"]
+    BUSINESS_REPO_URL = ENV_MAP[STAGE]["businessRepoUrl"]
+    BUSINESS_REPO_BRANCHES = ENV_MAP[STAGE]["businessRepoBranches"]
+
+    NODE_LIST = nodesByLabel label: "${AGENT_LABEL}", offline: false
+}
+
+stage("Sync ${BUSINESS_REPO_NAME}") {
+    NODE_LIST.each {
+        pull(BUSINESS_REPO_NAME, BUSINESS_REPO_URL, BUSINESS_REPO_BRANCHES, it)
+    }
+}
+
+stage("Sync pipeline-conf") {
+    def repoName = "pipeline-conf"
+    def repoUrl = "git@fangcun.vesync.com:testTeam/${repoName}.git"
+    def branches = ["deploy"]
+    
+    NODE_LIST.each {
+        pull(repoName, repoUrl, branches, it)
+        node(it) {
+            sh "cp ${QA_HOME}/${repoName}/master/bin/*.groovy ${JMETER_HOME}/bin"
+            sh "cp ${QA_HOME}/${repoName}/master/lib/*.jar ${JMETER_HOME}/lib"
+            sh "cp ${QA_HOME}/${repoName}/master/resources/*.xsl ${JMETER_HOME}/extras"
+        }
+    }
+}
+
+stage("Nacos") {
+	def repoName = "nacos-jmeter"
+    def repoUrl = "git@fangcun.vesync.com:testTeam/nacos-jmeter.git"
+    def branch = "master"
+    
+    NODE_LIST.each {
+        pull(repoName, repoUrl, branch, it)
+    }
+	echo "Making Nacos snapshot..."
+	sh "cd ${QA_HOME}/${repoName}/bin; mkdir ../snapshot; python3 make_snapshot.py ../snapshot"
+}
