@@ -50,7 +50,7 @@ def pull(String repoName, String repoUrl, branch, String label) {
 				checkout([$class: 'GitSCM', branches: [[name: "${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
 			}
 		}
-	} else if {branch instanceof String} {
+	} else if (branch instanceof String) {
 		node(label) {
 			dstDir = "${localRepoDir}"
 			sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
