@@ -101,7 +101,9 @@ stage("Nacos") {
     
     NODE_LIST.each {
         pull(repoName, repoUrl, branch, it)
+		node(it) {
+			echo "Making Nacos snapshot..."
+			sh "cd ${QA_HOME}/${repoName}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ../snapshot"
+		}
     }
-	echo "Making Nacos snapshot..."
-	sh "cd ${QA_HOME}/${repoName}/bin; mkdir ../snapshot; python3 make_snapshot.py ../snapshot"
 }
