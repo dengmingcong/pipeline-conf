@@ -49,7 +49,7 @@ node(AGENT_LABEL) {
 	stage("Pre-Build") {
         sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
         sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
-		sh "cd ${NACOS_JMETER}; python3 bin/init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML}"
+		sh "cd ${NACOS_JMETER}/bin; python3 init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML}"
 	}
 	
 	stage("Ant Build") {
