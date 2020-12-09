@@ -73,19 +73,26 @@ stage("Set Environment Variables") {
     NODE_LIST = nodesByLabel label: "${AGENT_LABEL}", offline: false
 }
 
-stage("Sync ${BUSINESS_REPO_NAME}") {
+stage("update ${BUSINESS_REPO_NAME}.git") {
     NODE_LIST.each {
         pull(BUSINESS_REPO_NAME, BUSINESS_REPO_URL, BUSINESS_REPO_BRANCHES, it)
     }
 }
 
-stage("Sync pipeline-conf") {
+stage("update pipeline-conf.git") {
     def repoName = "pipeline-conf"
     def repoUrl = "git@fangcun.vesync.com:testTeam/${repoName}.git"
     def branches = ["deploy"]
     
     NODE_LIST.each {
         pull(repoName, repoUrl, branches, it)
+    }
+}
+
+stage("update jmeter") {
+    def repoName = "pipeline-conf"
+    
+    NODE_LIST.each {
         node(it) {
             sh "cp ${QA_HOME}/${repoName}/master/bin/*.groovy ${JMETER_HOME}/bin"
             sh "cp ${QA_HOME}/${repoName}/master/lib/*.jar ${JMETER_HOME}/lib"
@@ -94,15 +101,21 @@ stage("Sync pipeline-conf") {
     }
 }
 
-stage("Nacos") {
+stage("update nacos-jmeter.git") {
 	def repoName = "nacos-jmeter"
     def repoUrl = "git@fangcun.vesync.com:testTeam/nacos-jmeter.git"
     def branch = "master"
     
     NODE_LIST.each {
         pull(repoName, repoUrl, branch, it)
+    }
+}
+
+stage("update nacos snapshot") {
+	def repoName = "nacos-jmeter"
+    
+    NODE_LIST.each {
 		node(it) {
-			echo "Making Nacos snapshot..."
 			sh "cd ${QA_HOME}/${repoName}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ../snapshot"
 		}
     }
