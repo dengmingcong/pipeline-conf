@@ -108,7 +108,7 @@ if (["all", "jmeter files"].contains(UPDATE)) {
 	}
 }
 
-if (["all", "nacos-jmeter.git"].contains(UPDATE)) {
+if (["all", "nacos-jmeter.git", "nacos (group)"].contains(UPDATE)) {
 	stage("update nacos-jmeter.git") {
 		def repoName = "nacos-jmeter"
 		def repoUrl = "git@fangcun.vesync.com:testTeam/nacos-jmeter.git"
@@ -121,7 +121,7 @@ if (["all", "nacos-jmeter.git"].contains(UPDATE)) {
 }
 
 
-if (["all", "nacos snapshot"].contains(UPDATE)) {
+if (["all", "nacos snapshot", "nacos (group)"].contains(UPDATE)) {
 	stage("update nacos snapshot") {
 		def repoName = "nacos-jmeter"
 		
