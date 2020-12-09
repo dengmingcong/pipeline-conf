@@ -73,7 +73,8 @@ stage("set environment variables") {
 
     NODE_LIST = nodesByLabel label: "${AGENT_LABEL}", offline: false
 }
-if (["all", "${BUSINESS_REPO_NAME}.git"].contains(UPDATE)) {
+
+if (["all", "cloud-api-test.git"].contains(UPDATE)) {
 	stage("update ${BUSINESS_REPO_NAME}.git") {
 		NODE_LIST.each {
 			pull(BUSINESS_REPO_NAME, BUSINESS_REPO_URL, BUSINESS_REPO_BRANCHES, it)
