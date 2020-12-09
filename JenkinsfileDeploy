@@ -74,6 +74,17 @@ stage("set environment variables") {
     NODE_LIST = nodesByLabel label: "${AGENT_LABEL}", offline: false
 }
 
+if (["all", "agent info"].contains(UPDATE)) {
+	stage("get agent info") {
+		NODE_LIST.each {
+			node(it) {
+				sh "ifconfig"
+				sh "hostname"
+			}
+		}
+	}
+}
+
 if (["all", "cloud-api-test.git"].contains(UPDATE)) {
 	stage("update ${BUSINESS_REPO_NAME}.git") {
 		NODE_LIST.each {
