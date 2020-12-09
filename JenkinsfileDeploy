@@ -138,7 +138,7 @@ if (["all", "nacos snapshot", "nacos (group)"].contains(UPDATE)) {
 		
 		NODE_LIST.each {
 			node(it) {
-				sh "cd ${QA_HOME}/${repoName}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ../snapshot"
+				sh "cd ${QA_HOME}/${repoName}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ${STAGE} ../snapshot"
 			}
 		}
 	}
