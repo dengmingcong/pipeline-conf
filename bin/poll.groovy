@@ -71,10 +71,10 @@ def isExpectedResponseJsonAfterPoll(Map checkPoints) {
         }
         response = response.replaceAll("\\\\", "");
         responseHistory += """\
-		# ${i} / ${count}
-				
-		* Response
-		${response}\n\n""".stripIndent()
+# ${i} / ${count}
+		
+* Response
+${response}\n\n""".stripIndent()
         log.info("Tried ${i} times, Response: ${response}");
         
         if (isExpectedResponseJson(response, checkPoints)) {
@@ -129,10 +129,10 @@ def isExpectedResponseStringAfterPoll(List checkPoints) {
         }
         response = response.replace("\\", "");
         responseHistory += """\
-		# ${i} / ${count}
-				
-		* Response
-		${response}\n\n""".stripIndent()
+# ${i} / ${count}
+		
+* Response
+${response}\n\n""".stripIndent()
         log.info("Tried ${i} times, Response: ${response}");
         
         if (isExpectedResponseString(response, checkPoints)) {
