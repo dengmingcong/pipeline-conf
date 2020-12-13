@@ -85,14 +85,15 @@ if (["all", "Automation_Env.git"].contains(UPDATE)) {
 if (["all", "pipeline-conf.git"].contains(UPDATE)) {
 	stage("update pipeline-conf.git") {
 		def repoName = "pipeline-conf"
-		def repoUrl = "git@local-git.vesync.com:testTeam/${repoName}.git"
+		def repoUrl = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
 		def branches = ["master", "dev", "cn"]
 		
-		node("master") {
+		/* node("master") {
 			checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "git@fangcun.vesync.com:testTeam/pipeline-conf.git"]]])
+			sh "git checkout master"
 			sh "git remote add langitlab ${repoUrl} || echo 'already exist'"
 			sh "git push langitlab --all"
-		}
+		} */
 		
 		NODE_LIST.each {
 			pull(repoName, repoUrl, branches, it)
