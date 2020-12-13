@@ -59,14 +59,29 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Publish HTML Reports") {
+		def reportFiles = []
         jmx_file_names = readJSON file: "jmx.json"
         jmx_file_names.each {
-		    publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'reports', reportFiles: "${it}.html", reportName: "${it}", reportTitles: "${it}"])
+			jtlContent = readFile "${it}.jtl"
+			if (jtlContent.contains('s="false"')) {
+				newReportName = "[FAIL]${it}.html"
+				sh "mv reports/${it}.html reports/${newReportName}"
+				reportFiles.add(newReportName)
+			} else {
+				newReportName = "[PASS]${it}.html"
+				sh "mv reports/${it}.html reports/[PASS]${it}.html"
+				reportFiles.add(newReportName)
+			}
         }
+		reportFilesString = reportFiles.join(",")
+		publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'reports', reportFiles: reportFilesString, reportName: "${TEST_NAME}", reportTitles: ""])
 	}
 	
 	stage("Mark Unstable") {
-		sh "[[ `grep -c '<failure>true</failure>' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl` == 0 ]]"
-		sh "[[ `grep -c 's=\"false\"' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl` == 0 ]]"
+        jmx_file_names = readJSON file: "jmx.json"
+        jmx_file_names.each {
+			sh "[[ `grep -c '<failure>true</failure>' ${it}.jtl` == 0 ]]"
+			sh "[[ `grep -c 's=\"false\"' ${it}.jtl` == 0 ]]"
+        }
 	}
 }
