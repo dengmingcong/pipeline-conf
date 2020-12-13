@@ -89,7 +89,7 @@ if (["all", "pipeline-conf.git"].contains(UPDATE)) {
 		def branches = ["master", "dev", "cn"]
 		
 		node("master") {
-			checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+			checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "git@fangcun.vesync.com:testTeam/pipeline-conf.git"]]])
 			sh "git remote add langitlab ${repoUrl} || echo 'already exist'"
 			sh "git push langitlab --all"
 		}
