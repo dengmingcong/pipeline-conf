@@ -46,6 +46,19 @@ node(AGENT_LABEL) {
     def BUSINESS_REPO_BRANCH = "master"
 	def BUSINESS_REPO_DIR = "${QA_HOME}/${BUSINESS_REPO_NAME}/${BUSINESS_REPO_BRANCH}"
 	
+	stage("Check Agent Health") {
+		echo "Execute command 'hostname' to check agent health (one minute once)."
+		retry(5) {
+            try {
+                timeout(1) {
+                    sh "hostname"
+                }
+            } catch (Exception e) {
+                error "Error. Cannot execute command now."
+            }
+        }
+	}
+	
 	stage("Pre-Build") {
         sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
         sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
