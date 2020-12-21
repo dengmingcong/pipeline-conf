@@ -46,10 +46,23 @@ node(AGENT_LABEL) {
     def BUSINESS_REPO_NAME = ""
     def BUSINESS_REPO_BRANCH = ""
 
+	stage("Check Agent Health") {
+		echo "Execute command 'hostname' to check agent health (one minute once)."
+		retry(5) {
+            try {
+                timeout(1) {
+                    sh "hostname"
+                }
+            } catch (Exception e) {
+                error "Error. Cannot execute command now."
+            }
+        }
+	}
+
 	stage("Assign JMeter Test Plan") {
         def jobConfFile = "${PIPELINE_CONF_DIR}/jobs/${env.JOB_NAME}.json"
         echo "Jenkins job configuration file: ${jobConfFile}"
-        sh "hostname"
+        
         if (!fileExists(jobConfFile)) {
             error "Configuration file ${jobConfFile} does not exist."
         }
