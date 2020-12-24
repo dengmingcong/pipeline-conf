@@ -1,7 +1,7 @@
 {
     "env": "testonline",
     "git": {
-        "branch": "Regression_master"
+        "branch": "master"
     },
     "jmeter": {
         "jmx": "testScripts/FitnessTracker.jmx"
