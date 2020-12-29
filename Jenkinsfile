@@ -107,6 +107,6 @@ node(AGENT_LABEL) {
 	
 	stage("Mark Unstable") {
 		sh "[[ `grep -c '<failure>true</failure>' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl` == 0 ]]"
-		// sh "[[ `grep -c 's=\"false\"' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl` == 0 ]]"
+		sh "[[ `grep -c 's=\"false\"' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl` == 0 ]]"
 	}
 }
