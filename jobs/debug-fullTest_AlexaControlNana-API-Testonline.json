@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/FitnessTracker.jmx"
+        "jmx": "testScripts/Alexa-Nana_V1.0.jmx"
     }
 }
