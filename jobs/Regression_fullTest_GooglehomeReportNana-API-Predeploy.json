@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/Classic200SUS.jmx"
+        "jmx": "testScripts/GooglehomeUp-Nana_V1.0.jmx"
     }
 }

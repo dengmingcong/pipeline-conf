@@ -4,6 +4,6 @@
         "branch": "Heby"
     },
     "jmeter": {
-        "jmx": "testSripts/FootMassager.jmx"
+        "jmx": "testSripts/Dual200.jmx"
     }
 }

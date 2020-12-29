@@ -5,7 +5,7 @@
         See http://www.programmerplanet.org/pages/projects/jmeter-ant-task.php
     </description>
     
-    <property name="project.root.dir" value=""/>
+    <property name="jenkins.job.workspace" value=""/>
     <property name="jmeter.home" value=""/>
     <property name="report.title" value="Load Test Results"/>
     
@@ -19,11 +19,11 @@
     <target name="all" depends="run,report"/>
 
     <target name="run">
-        <delete file="${project.root.dir}/${test}.jtl"/>
+        <delete file="${jenkins.job.workspace}/${test}.jtl"/>
         <jmeter
             jmeterhome="${jmeter.home}"
             testplan =""
-            resultlog="${project.root.dir}/${test}.jtl">
+            resultlog="${jenkins.job.workspace}/${test}.jtl">
             <!-- Force suitable defaults -->
             <property name="jmeter.save.saveservice.output_format" value="xml"/>
             <property name="jmeter.save.saveservice.assertion_results" value="all"/>
@@ -35,7 +35,7 @@
 
     <!-- Use xalan copy from JMeter lib directory to ensure consistent processing with Java 1.4+ -->
     <path id="xslt.classpath">
-		<fileset dir="${project.root.dir}/lib" includes="saxon*.jar"/>
+		<fileset dir="${lib.dir}" includes="saxon*.jar"/>
         <fileset dir="${lib.dir}" includes="xalan*.jar"/>
         <fileset dir="${lib.dir}" includes="serializer*.jar"/>
     </path>
@@ -49,8 +49,8 @@
         <xslt
             classpathref="xslt.classpath"
             force="true"
-            in="${project.root.dir}/${test}.jtl"
-            out="${project.root.dir}/reports/${test}_summary.html"
+            in="${jenkins.job.workspace}/${test}.jtl"
+            out="${jenkins.job.workspace}/reports/${test}_summary.html"
             style="${jmeter.home}/extras/jmeter-results-detail-report_21.xsl">
             <param name="titleReport" expression="${report.title}"/>
             <param name="dateReport" expression="${report.datestamp}"/>
@@ -58,9 +58,9 @@
         <xslt
             classpathref="xslt.classpath"
             force="true"
-            in="${project.root.dir}/${test}.jtl"
-            out="${project.root.dir}/reports/${test}_detail.html"
-            style="${project.root.dir}/resources/jmeter.results.foldable.xsl">
+            in="${jenkins.job.workspace}/${test}.jtl"
+            out="${jenkins.job.workspace}/reports/${test}_detail.html"
+            style="${jmeter.home}/extras/jmeter.results.foldable.xsl">
             <param name="titleReport" expression="${report.title}"/>
             <param name="dateReport" expression="${report.datestamp}"/>
         </xslt>
@@ -68,9 +68,8 @@
 
     <!-- Copy report images if needed -->
     <target name="copy-images">
-        <copy file="${jmeter.home}/extras/expand.png" tofile="${project.root.dir}/reports/expand.png"/>
-        <copy file="${jmeter.home}/extras/collapse.png" tofile="${project.root.dir}/reports/collapse.png"/>
+        <copy file="${jmeter.home}/extras/expand.png" tofile="${jenkins.job.workspace}/reports/expand.png"/>
+        <copy file="${jmeter.home}/extras/collapse.png" tofile="${jenkins.job.workspace}/reports/collapse.png"/>
     </target>
-
 
 </project>

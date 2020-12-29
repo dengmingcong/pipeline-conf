@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/linkHeby.jmx"
+        "jmx": "testScripts/thirdparty-131_V1.0.jmx"
     }
 }

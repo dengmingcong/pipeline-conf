@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/Classic200SUS.jmx"
+        "jmx": "testScripts/IftttUp-Nana_V1.0.jmx"
     }
 }
