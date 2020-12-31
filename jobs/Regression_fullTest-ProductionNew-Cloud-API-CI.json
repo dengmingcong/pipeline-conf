@@ -1,0 +1,9 @@
+{
+    "env": "ci",
+    "git": {
+        "branch": "Yukin"
+    },
+    "jmeter": {
+        "jmx": "testSripts/ProductionNew.jmx"
+    }
+}
