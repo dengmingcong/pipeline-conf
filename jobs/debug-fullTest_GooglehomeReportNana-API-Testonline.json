@@ -1,7 +1,7 @@
 {
 
     "git": {
-        "branch": "Nana"
+        "branch": "master"
     },
     "jmeter": {
         "jmx": "testScripts/GooglehomeUp-Nana_V1.0.jmx"
