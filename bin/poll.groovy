@@ -1,10 +1,5 @@
 import static com.jayway.jsonpath.JsonPath.parse
 
-timeout = 10000;
-interval = 500;
-count = (timeout / interval).intValue();
-rangeRetry = 1..count;
-
 def response;
 def jsonObject;
 
@@ -156,6 +151,30 @@ ${response}\n\n""".stripIndent()
 ** 4. If neither, mark assertion as failure.
 */
 def poll() {
+	timeout = 10000;
+	interval = 500;
+
+	// Set timeout equal to first argument if 'Parameters' does not start with '['
+	if (!Parameters.startsWith('[')) {
+		try {
+			timeout = args[0].toInteger()
+		} catch(e) {
+			responseHistory += """\
+			
+			* Error message
+			The first argument can only be numbers if 'Parameters' does not start with '['.\n\n""".stripIndent();
+			AssertionResult.setFailureMessage("${responseHistory}");
+            AssertionResult.setFailure(true);
+			return
+		}
+		Parameters = Parameters.replace(args[0], "")
+	}
+	
+	count = (timeout / interval).intValue();
+	rangeRetry = 1..count;
+	
+	responseHistory += """\nTimeout set to expire in ${timeout} milliseconds.\n""";
+	
     def checkPoints = Eval.me(Parameters)
     switch (checkPoints) {
         case Map:
