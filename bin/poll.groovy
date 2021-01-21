@@ -173,12 +173,12 @@ def poll() {
 	count = (timeout / interval).intValue();
 	rangeRetry = 1..count;
 	
-	responseHistory += """\nTimeout set to expire in ${timeout} milliseconds.\n""";
+	responseHistory += """Timeout set to expire in ${timeout} milliseconds.\n""";
 	
     def checkPoints = Eval.me(Parameters)
     switch (checkPoints) {
         case Map:
-			responseHistory += "Parameters are evaluated as Map, response would be treated as JSON.\n"
+			responseHistory += "Parameters are evaluated as Map, response would be treated as JSON.\n\n"
             if (isExpectedResponseJsonAfterPoll(checkPoints)) {
                 AssertionResult.setFailureMessage("${responseHistory}");
                 AssertionResult.setFailure(false);
@@ -190,7 +190,7 @@ def poll() {
             break        
 
         case List:
-			responseHistory += "Parameters are evaluated as List, response would be treated as literal string.\n"
+			responseHistory += "Parameters are evaluated as List, response would be treated as literal string.\n\n"
             if (isExpectedResponseStringAfterPoll(checkPoints)) {
                 AssertionResult.setFailureMessage("${responseHistory}");
                 AssertionResult.setFailure(false);
