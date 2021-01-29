@@ -95,9 +95,15 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Ant Build") {
-		timeout(15) {
-			sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML}"
+		try {
+			sh "timeout 900 ${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML} run"		
+		} catch (Exception e) {
+			echo "Error. Ant building was interrupted (caused by timeout or manual aborted), try to generate report for tests already runned."
+			sh "sed -i 's/<testResults/& aborted=\"true\"/' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl"
+			sh "if ! grep '<failure>true</failure>' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl; then echo '<failure>true</failure>' >> ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl ; fi"
+			sh "if ! grep '</testResults>' ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl ; then echo '</testResults>' >> ${JENKINS_JOB_WORKSPACE}/${TEST_NAME}.jtl ; fi"
 		}
+		sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML} report"
 	}
 	
 	stage("Publish HTML Reports") {
