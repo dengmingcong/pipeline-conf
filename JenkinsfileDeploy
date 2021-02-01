@@ -40,10 +40,12 @@ def parseJobName() {
 	if (jobNameLowerCase.contains("debug")) {
 		DEBUG = true
 		QA_HOME = "/data/qa/debug"
+		echo "Word 'debug' found in job name, deploy all files to directory ${QA_HOME}."
 		JMETER_HOME = "${QA_HOME}/jmeter40"
 		
 	} else {
 		QA_HOME = "/data/qa/stable"
+		echo "Word 'debug' not found in job name, deploy all files to directory ${QA_HOME}."
 		JMETER_HOME = "/usr/local/jmeter40"
 	}
 }
