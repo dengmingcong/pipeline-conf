@@ -9,29 +9,47 @@ ENV_MAP = [
 ]
 
 ANT_HOME = "/data/apache-ant-1.9.14"
-JMETER_HOME = "/usr/local/jmeter40"
-QA_HOME = "/data/qa"
+JMETER_HOME = ""
+QA_HOME = ""
 PIPELINE_CONF_BRANCH = "master"
-PIPELINE_CONF_DIR = "${QA_HOME}/pipeline-conf/${PIPELINE_CONF_BRANCH}"
+PIPELINE_CONF_DIR = ""
 STAGE = ""
 AGENT_LABEL = ""
 
-stage("Set Agent Label") {
-    node {
-        def jobNameLowerCase = env.JOB_NAME.toLowerCase()
+/*
+** 1. determine test stage based on Jenkins job name.
+** 2. set QA_HOME to "/data/qa/debug" if string "debug" occurs in job name, else to "/data/qa/stable".
+** 3. set JMETER_HOME to "${QA_HOME}/jmeter40" if string "debug" occurs in job name, else to "/usr/local/jmeter40".
+*/
+def parseJobName() {
+    def jobNameLowerCase = env.JOB_NAME.toLowerCase()
 
-        if (jobNameLowerCase.endsWith("ci")) {
-        	STAGE = "ci"
-        } else if (jobNameLowerCase.endsWith("testonline")) {
-        	STAGE = "testonline"
-        } else if (jobNameLowerCase.endsWith("predeploy")) {
-        	STAGE = "predeploy"
-        } else {
-        	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
-        }
-        AGENT_LABEL = ENV_MAP[STAGE]['label']
-        echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
+    if (jobNameLowerCase.endsWith("ci")) {
+    	STAGE = "ci"
+    } else if (jobNameLowerCase.endsWith("testonline")) {
+    	STAGE = "testonline"
+    } else if (jobNameLowerCase.endsWith("predeploy")) {
+    	STAGE = "predeploy"
+    } else {
+    	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
     }
+	
+	if (jobNameLowerCase.startsWith("debug")) {
+		QA_HOME = "/data/qa/debug"
+		JMETER_HOME = "${QA_HOME}/jmeter40"
+	} else {
+		QA_HOME = "/data/qa/stable"
+		JMETER_HOME = "/usr/local/jmeter40"
+	}
+}
+
+stage("Set Envionment Variables") {
+    parseJobName()
+	
+	PIPELINE_CONF_DIR = "${QA_HOME}/pipeline-conf/${PIPELINE_CONF_BRANCH}"
+	
+	AGENT_LABEL = ENV_MAP[STAGE]['label']
+	echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
 }
 
 node(AGENT_LABEL) {
