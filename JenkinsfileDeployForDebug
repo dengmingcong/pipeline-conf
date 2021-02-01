@@ -16,12 +16,13 @@ BUSINESS_REPO_URL = ""
 BUSINESS_REPO_BRANCHES = ""
 NODE_LIST = []
 UPDATE = params.update
+DEBUG = false
 
 /*
 ** 1. determine test stage based on Jenkins job name.
-** 2. set QA_HOME to "/data/qa/debug" if string "debug" occurs in job name, else to "/data/qa/stable", and create the directory if not exists.
-** 3. set JMETER_HOME to "${QA_HOME}/jmeter40" if string "debug" occurs in job name, else to "/usr/local/jmeter40".
-** 4. copy directory "/usr/local/jmeter40" to "${QA_HOME}" if string "debug" occurs in job name.
+** 2. set DEBUG to true if string "debug" occurs in job name.
+** 3. set QA_HOME to "/data/qa/debug" if string "debug" occurs in job name, else to "/data/qa/stable".
+** 4. set JMETER_HOME to "${QA_HOME}/jmeter40" if string "debug" occurs in job name, else to "/usr/local/jmeter40".
 */
 def parseJobName() {
     def jobNameLowerCase = env.JOB_NAME.toLowerCase()
@@ -37,13 +38,12 @@ def parseJobName() {
     }
 	
 	if (jobNameLowerCase.contains("debug")) {
+		DEBUG = true
 		QA_HOME = "/data/qa/debug"
-		sh "[[ -d ${QA_HOME} ]] || mkdir -p ${QA_HOME}"
 		JMETER_HOME = "${QA_HOME}/jmeter40"
-		sh "[[ -d ${JMETER_HOME} ]] || cp -r /usr/local/jmeter40 ${QA_HOME}"
+		
 	} else {
 		QA_HOME = "/data/qa/stable"
-		sh "[[ -d ${QA_HOME} ]] || mkdir -p ${QA_HOME}"
 		JMETER_HOME = "/usr/local/jmeter40"
 	}
 }
@@ -121,6 +121,11 @@ if (["all", "jmeter files"].contains(UPDATE)) {
 		
 		NODE_LIST.each {
 			node(it) {
+				// copy directory "/usr/local/jmeter40" to "${QA_HOME}" if string "debug" occurs in job name.
+				if (DEBUG) {
+					sh "[[ -d ${JMETER_HOME} ]] || cp -r /usr/local/jmeter40 ${QA_HOME}"
+				}
+				
 				sh "cp ${QA_HOME}/${repoName}/master/bin/*.groovy ${JMETER_HOME}/bin"
 				sh "cp ${QA_HOME}/${repoName}/master/lib/*.jar ${JMETER_HOME}/lib"
 				sh "cp ${QA_HOME}/${repoName}/master/resources/*.xsl ${JMETER_HOME}/extras"
