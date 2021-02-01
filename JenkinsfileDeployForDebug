@@ -1,0 +1,130 @@
+#!/bin/bash/groovy
+
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '5')), disableConcurrentBuilds(), gitLabConnection('')])
+
+ENV_MAP = [
+	ci: [label: "fullTest", businessRepoName: "Automation_CI", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git", businessRepoBranches: ["Cheryl","Heby","Lilian","Nana","Yukin"]],
+	testonline: [label: "Predeploy-smokeTest", businessRepoName: "Automation_testonline", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git", businessRepoBranches: ["master"]], 
+	predeploy: [label: "Predeploy-smokeTest", businessRepoName: "Automation_predeploy", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git", businessRepoBranches: ["master"]]
+]
+JMETER_HOME = ""
+QA_HOME = ""
+STAGE = ""
+AGENT_LABEL = ""
+BUSINESS_REPO_NAME = ""
+BUSINESS_REPO_URL = ""
+BUSINESS_REPO_BRANCHES = ""
+NODE_LIST = []
+UPDATE = params.update
+
+/*
+** 1. determine test stage based on Jenkins job name.
+** 2. set QA_HOME to "/data/qa/debug" if string "debug" occurs in job name, else to "/data/qa/stable", and create the directory if not exists.
+** 3. set JMETER_HOME to "${QA_HOME}/jmeter40" if string "debug" occurs in job name, else to "/usr/local/jmeter40".
+** 4. copy directory "/usr/local/jmeter40" to "${QA_HOME}" if string "debug" occurs in job name.
+*/
+def parseJobName() {
+    def jobNameLowerCase = env.JOB_NAME.toLowerCase()
+
+    if (jobNameLowerCase.endsWith("ci")) {
+    	STAGE = "ci"
+    } else if (jobNameLowerCase.endsWith("testonline")) {
+    	STAGE = "testonline"
+    } else if (jobNameLowerCase.endsWith("predeploy")) {
+    	STAGE = "predeploy"
+    } else {
+    	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
+    }
+	
+	if (jobNameLowerCase.contains("debug")) {
+		QA_HOME = "/data/qa/debug"
+		sh "[[ -d ${QA_HOME} ]] || mkdir -p ${QA_HOME}"
+		JMETER_HOME = "${QA_HOME}/jmeter40"
+		sh "[[ -d ${JMETER_HOME} ]] || cp -r /usr/local/jmeter40 ${QA_HOME}"
+	} else {
+		QA_HOME = "/data/qa/stable"
+		sh "[[ -d ${QA_HOME} ]] || mkdir -p ${QA_HOME}"
+		JMETER_HOME = "/usr/local/jmeter40"
+	}
+}
+
+/*
+** Pull from remote Git repository to the specified agent.
+** The remote repository will be pulled several times, each time to a directory named with branch if passed a list.
+*/
+def pull(String repoName, String repoUrl, branch, String label) {
+    echo "Begin to sync repository ${repoUrl}"
+    def localRepoDir = "${QA_HOME}/${repoName}"
+	
+	if (branch instanceof List) {
+		node(label) {
+			branch.each {
+				dstDir = "${localRepoDir}/${it}"
+				sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
+				echo "Pulling branch ${it} to directory ${dstDir}"
+				checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+			}
+		}
+	} else if (branch instanceof String) {
+		node(label) {
+			dstDir = "${localRepoDir}"
+			sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
+			echo "Pulling branch ${branch} to directory ${dstDir}"
+			checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+		}
+	}
+}
+
+stage("set environment variables") {
+    parseJobName()
+
+    AGENT_LABEL = ENV_MAP[STAGE]['label']
+    echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
+
+    BUSINESS_REPO_NAME = ENV_MAP[STAGE]["businessRepoName"]
+    BUSINESS_REPO_URL = ENV_MAP[STAGE]["businessRepoUrl"]
+    BUSINESS_REPO_BRANCHES = ENV_MAP[STAGE]["businessRepoBranches"]
+
+    NODE_LIST = nodesByLabel label: "${AGENT_LABEL}", offline: false
+}
+
+if (["all", "Automation_Env.git"].contains(UPDATE)) {
+	stage("update ${BUSINESS_REPO_NAME}.git") {
+		NODE_LIST.each {
+			pull(BUSINESS_REPO_NAME, BUSINESS_REPO_URL, BUSINESS_REPO_BRANCHES, it)
+		}
+	}
+}
+
+if (["all", "pipeline-conf.git"].contains(UPDATE)) {
+	stage("update pipeline-conf.git") {
+		def repoName = "pipeline-conf"
+		def repoUrl = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
+		def branches = ["master", "dev", "cn"]
+		
+		/* node("master") {
+			checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "git@fangcun.vesync.com:testTeam/pipeline-conf.git"]]])
+			sh "git checkout master"
+			sh "git remote add langitlab ${repoUrl} || echo 'already exist'"
+			sh "git push langitlab --all"
+		} */
+		
+		NODE_LIST.each {
+			pull(repoName, repoUrl, branches, it)
+		}
+	}
+}
+
+if (["all", "jmeter files"].contains(UPDATE)) {
+	stage("update jmeter files") {
+		def repoName = "pipeline-conf"
+		
+		NODE_LIST.each {
+			node(it) {
+				sh "cp ${QA_HOME}/${repoName}/master/bin/*.groovy ${JMETER_HOME}/bin"
+				sh "cp ${QA_HOME}/${repoName}/master/lib/*.jar ${JMETER_HOME}/lib"
+				sh "cp ${QA_HOME}/${repoName}/master/resources/*.xsl ${JMETER_HOME}/extras"
+			}
+		}
+	}
+}
