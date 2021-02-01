@@ -3,12 +3,12 @@
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '5')), disableConcurrentBuilds(), gitLabConnection('')])
 
 ENV_MAP = [
-	ci: [label: "fullTest", businessRepoName: "Automation_CI", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git", businessRepoBranches: ["Raigor", "Regression_Raigor", "Cheryl", "Regression_Cheryl", "Heby", "Regression_Heby", "Lilian", "Regression_Lilian", "Nana", "Regression_Nana", "Yukin", "Regression_Yukin"]],
-	testonline: [label: "Predeploy-smokeTest", businessRepoName: "Automation_testonline", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git", businessRepoBranches: ["master", "Regression_master"]], 
-	predeploy: [label: "Predeploy-smokeTest", businessRepoName: "Automation_predeploy", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git", businessRepoBranches: ["master", "Regression_master"]]
+	ci: [label: "fullTest", businessRepoName: "Automation_CI", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git", businessRepoBranches: ["Cheryl","Heby","Lilian","Nana","Yukin"]],
+	testonline: [label: "Predeploy-smokeTest", businessRepoName: "Automation_testonline", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git", businessRepoBranches: ["master"]], 
+	predeploy: [label: "Predeploy-smokeTest", businessRepoName: "Automation_predeploy", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git", businessRepoBranches: ["master"]]
 ]
-JMETER_HOME = "/usr/local/jmeter40"
-QA_HOME = "/data/qa"
+JMETER_HOME = ""
+QA_HOME = ""
 STAGE = ""
 AGENT_LABEL = ""
 BUSINESS_REPO_NAME = ""
@@ -16,9 +16,13 @@ BUSINESS_REPO_URL = ""
 BUSINESS_REPO_BRANCHES = ""
 NODE_LIST = []
 UPDATE = params.update
+DEBUG = false
 
 /*
-** Determine test stage based on Jenkins job name.
+** 1. determine test stage based on Jenkins job name.
+** 2. set DEBUG to true if string "debug" occurs in job name.
+** 3. set QA_HOME to "/data/qa/debug" if string "debug" occurs in job name, else to "/data/qa/stable".
+** 4. set JMETER_HOME to "${QA_HOME}/jmeter40" if string "debug" occurs in job name, else to "/usr/local/jmeter40".
 */
 def parseJobName() {
     def jobNameLowerCase = env.JOB_NAME.toLowerCase()
@@ -32,6 +36,16 @@ def parseJobName() {
     } else {
     	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
     }
+	
+	if (jobNameLowerCase.contains("debug")) {
+		DEBUG = true
+		QA_HOME = "/data/qa/debug"
+		JMETER_HOME = "${QA_HOME}/jmeter40"
+		
+	} else {
+		QA_HOME = "/data/qa/stable"
+		JMETER_HOME = "/usr/local/jmeter40"
+	}
 }
 
 /*
@@ -107,6 +121,11 @@ if (["all", "jmeter files"].contains(UPDATE)) {
 		
 		NODE_LIST.each {
 			node(it) {
+				// copy directory "/usr/local/jmeter40" to "${QA_HOME}" if string "debug" occurs in job name.
+				if (DEBUG) {
+					sh "[[ -d ${JMETER_HOME} ]] || cp -r /usr/local/jmeter40 ${QA_HOME}"
+				}
+				
 				sh "cp ${QA_HOME}/${repoName}/master/bin/*.groovy ${JMETER_HOME}/bin"
 				sh "cp ${QA_HOME}/${repoName}/master/lib/*.jar ${JMETER_HOME}/lib"
 				sh "cp ${QA_HOME}/${repoName}/master/resources/*.xsl ${JMETER_HOME}/extras"
