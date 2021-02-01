@@ -100,7 +100,7 @@ if (["all", "pipeline-conf.git"].contains(UPDATE)) {
 	stage("update pipeline-conf.git") {
 		def repoName = "pipeline-conf"
 		def repoUrl = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
-		def branches = ["master", "dev", "cn"]
+		def branches = ["master", "cn"]
 		
 		/* node("master") {
 			checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "git@fangcun.vesync.com:testTeam/pipeline-conf.git"]]])
