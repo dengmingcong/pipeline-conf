@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 ** @url String, the path by which to send the request.
 ** @body Map<String,Object>, body of POST request. 
 */
-List<String> sendPost(String url, Map<String,Object> body) {
+List<String> sendPost(String url, List body) {
 
 	// Create an object that allows to configure settings for the HTTP / HTTPS request
     RequestConfig requestConfig = RequestConfig.custom()
@@ -121,8 +121,10 @@ def pushToFalcon(String url) {
 	map.put("step", step);
 	map.put("value", value);
 	map.put("counterType", counterType);
+	
+	List data = [map];
 
-	List responseList = sendPost(url, map);
+	List responseList = sendPost(url, data);
 	log.info(Arrays.toString(responseList));
 }
 
