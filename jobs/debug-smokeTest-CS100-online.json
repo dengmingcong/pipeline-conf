@@ -1,0 +1,9 @@
+{
+    "env": "online",
+    "git": {
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testScripts/CS100smoke.jmx"
+    }
+}
