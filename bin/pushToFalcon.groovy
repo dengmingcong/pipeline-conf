@@ -2,6 +2,7 @@
 
 // Copied from https://www.blazemeter.com/blog/sending-http-and-https-requests-using-groovy-in-jmeter
 
+import org.apache.jmeter.samplers.SampleResult;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -106,8 +107,11 @@ def pushToFalcon(String url) {
 	def timestamp = System.currentTimeMillis();
 	def step = 120;
 	// response time, elapsed time in milliseconds
-	def value = prev.getTime();
-
+	def value = -1;
+	def isSuccess = prev.isSuccessful();
+	if(isSuccess){
+	value = prev.getTime();
+	}
 	def counterType = "GAUGE"
 
 	Map<String,Object> map = new LinkedHashMap<>();
