@@ -35,7 +35,7 @@ def parseJobName() {
     	STAGE = "online"
     }
 	else {
-    	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy', or 'online' (case insensitive)."
+    	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', 'predeploy', or 'online' (case insensitive)."
     }
 	
 	if (jobNameLowerCase.startsWith("debug")) {
