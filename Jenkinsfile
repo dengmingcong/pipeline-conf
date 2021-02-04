@@ -6,7 +6,7 @@ ENV_MAP = [
 	ci: [label: "fullTest", businessRepoName: "Automation_CI", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git", businessRepoBranches: ["Raigor", "Regression_Raigor"]],
 	testonline: [label: "Predeploy-smokeTest", businessRepoName: "Automation_testonline", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git", businessRepoBranches: ["master", "Regression_master"]], 
 	predeploy: [label: "Predeploy-smokeTest", businessRepoName: "Automation_predeploy", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git", businessRepoBranches: ["master", "Regression_master"]],
-	online: [label: "smokeTest", businessRepoName: "smokeTest_online", businessRepoUrl: "git@fangcun.vesync.com:testTeam/smokeTest_online.git", businessRepoBranches: ["master", "Regression_master"]]
+	online: [label: "smokeTest-2", businessRepoName: "smokeTest_online", businessRepoUrl: "git@fangcun.vesync.com:testTeam/smokeTest_online.git", businessRepoBranches: ["master", "Regression_master"]]
 ]
 
 ANT_HOME = "/data/apache-ant-1.9.14"
@@ -16,6 +16,7 @@ PIPELINE_CONF_BRANCH = "master"
 PIPELINE_CONF_DIR = ""
 STAGE = ""
 AGENT_LABEL = ""
+SMOKE_TAG = 0
 
 /*
 ** 1. determine test stage based on Jenkins job name.
@@ -44,6 +45,10 @@ def parseJobName() {
 	} else {
 		QA_HOME = "/data/qa/stable"
 		JMETER_HOME = "/usr/local/jmeter40"
+	}
+	
+	if (jobNameLowerCase.contains("smoketest") && jobNameLowerCase.contains("online")){
+		SMOKE_TAG = 1
 	}
 }
 
@@ -110,7 +115,11 @@ node(AGENT_LABEL) {
 	stage("Pre-Build") {
         echo "Converting simple controller to transaction controller..."
         sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
-        sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; python3 ${PIPELINE_CONF_DIR}/bin/simple_controller_to_transaction_controller.py ${JMX} ${JMX}; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
+		sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; python3 ${PIPELINE_CONF_DIR}/bin/simple_controller_to_transaction_controller.py ${JMX} ${JMX}; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
+		
+		if (SMOKE_TAG == 1){
+			sh "python3 ${PIPELINE_CONF_DIR}/bin/http_requests_add_JSR223Listener.py ${JMX} ${JMX}"
+		}
         
         echo "Generating customized build.xml.."
         sh "python3 ${CUSTOMIZE_BUILD_XML_PY} ${SAMPLE_BUILD_XML} ${OUTPUT_BUILD_XML} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${JMX} ${TEST_NAME} -p ${PROPERTY_FILES}"
