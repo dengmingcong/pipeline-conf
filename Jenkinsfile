@@ -6,7 +6,7 @@ ENV_MAP = [
 	ci: [label: "fullTest", businessRepoName: "Automation_CI", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git", businessRepoBranches: ["Raigor", "Regression_Raigor"]],
 	testonline: [label: "Predeploy-smokeTest", businessRepoName: "Automation_testonline", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git", businessRepoBranches: ["master", "Regression_master"]], 
 	predeploy: [label: "Predeploy-smokeTest", businessRepoName: "Automation_predeploy", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_predeploy.git", businessRepoBranches: ["master", "Regression_master"]],
-	online: [label: "smokeTest-2", businessRepoName: "smokeTest_online", businessRepoUrl: "git@fangcun.vesync.com:testTeam/smokeTest_online.git", businessRepoBranches: ["master", "Regression_master"]]
+	online: [label: "smokeTest", businessRepoName: "smokeTest_online", businessRepoUrl: "git@fangcun.vesync.com:testTeam/smokeTest_online.git", businessRepoBranches: ["master", "Regression_master"]]
 ]
 
 ANT_HOME = "/data/apache-ant-1.9.14"
