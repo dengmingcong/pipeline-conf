@@ -125,7 +125,7 @@ def pushToFalcon(String url) {
 	List data = [map];
 
 	List responseList = sendPost(url, data);
-	log.info(Arrays.toString(responseList));
+	log.info("responseList is " + Arrays.toString(responseList));
 }
 
 
