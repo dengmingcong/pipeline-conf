@@ -81,6 +81,35 @@ def pull(String repoName, String repoUrl, branch, String label) {
 }
 
 stage("set environment variables") {
+	echo "gitlabBranch: ${env.gitlabBranch}"
+	echo "gitlabSourceBranch: ${env.gitlabSourceBranch}"
+	echo "gitlabActionType: ${env.gitlabActionType}"
+	echo "gitlabUserName: ${env.gitlabUserName}"
+	echo "gitlabUserEmail: ${env.gitlabUserEmail}"
+	echo "gitlabSourceRepoHomepage: ${env.gitlabSourceRepoHomepage}"
+	echo "gitlabSourceRepoName: ${env.gitlabSourceRepoName}"
+	echo "gitlabSourceNamespace: ${env.gitlabSourceNamespace}"
+	echo "gitlabSourceRepoURL: ${env.gitlabSourceRepoURL}"
+	echo "gitlabSourceRepoSshUrl: ${env.gitlabSourceRepoSshUrl}"
+	echo "gitlabSourceRepoHttpUrl: ${env.gitlabSourceRepoHttpUrl}"
+	echo "gitlabMergeRequestTitle: ${env.gitlabMergeRequestTitle}"
+	echo "gitlabMergeRequestDescription: ${env.gitlabMergeRequestDescription}"
+	echo "gitlabMergeRequestId: ${env.gitlabMergeRequestId}"
+	echo "gitlabMergeRequestIid: ${env.gitlabMergeRequestIid}"
+	echo "gitlabMergeRequestState: ${env.gitlabMergeRequestState}"
+	echo "gitlabMergedByUser: ${env.gitlabMergedByUser}"
+	echo "gitlabMergeRequestAssignee: ${env.gitlabMergeRequestAssignee}"
+	echo "gitlabMergeRequestLastCommit: ${env.gitlabMergeRequestLastCommit}"
+	echo "gitlabMergeRequestTargetProjectId: ${env.gitlabMergeRequestTargetProjectId}"
+	echo "gitlabTargetBranch: ${env.gitlabTargetBranch}"
+	echo "gitlabTargetRepoName: ${env.gitlabTargetRepoName}"
+	echo "gitlabTargetNamespace: ${env.gitlabTargetNamespace}"
+	echo "gitlabTargetRepoSshUrl: ${env.gitlabTargetRepoSshUrl}"
+	echo "gitlabTargetRepoHttpUrl: ${env.gitlabTargetRepoHttpUrl}"
+	echo "gitlabBefore: ${env.gitlabBefore}"
+	echo "gitlabAfter: ${env.gitlabAfter}"
+	echo "gitlabTriggerPhrase: ${env.gitlabTriggerPhrase}"
+
     parseJobName()
 
     AGENT_LABEL = ENV_MAP[STAGE]['label']
