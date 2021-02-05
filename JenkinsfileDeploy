@@ -101,7 +101,7 @@ if (["all", "Automation_Env.git"].contains(UPDATE)) {
 	}
 }
 
-if (["all", "pipeline-conf.git"].contains(UPDATE)) {
+if (["all", "pipeline-conf.git", "group-pipeline"].contains(UPDATE)) {
 	stage("update pipeline-conf.git") {
 		def repoName = "pipeline-conf"
 		def repoUrl = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
@@ -120,7 +120,7 @@ if (["all", "pipeline-conf.git"].contains(UPDATE)) {
 	}
 }
 
-if (["all", "jmeter files"].contains(UPDATE)) {
+if (["all", "jmeter files", "group-pipeline"].contains(UPDATE)) {
 	stage("update jmeter files") {
 		def repoName = "pipeline-conf"
 		
