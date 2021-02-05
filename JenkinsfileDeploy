@@ -102,6 +102,7 @@ def pull(String repoName, String repoUrl, branch, String label) {
 stage("set environment variables") {
     parseJobName()
 	handleWebhook()
+	echo "UPDATE is set to: ${UPDATE}"
 
     AGENT_LABEL = ENV_MAP[STAGE]['label']
     echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
