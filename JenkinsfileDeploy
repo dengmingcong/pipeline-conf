@@ -54,6 +54,25 @@ def parseJobName() {
 }
 
 /*
+** Set UPDATE based on "${env.gitlabSourceRepoName}"
+*/
+def handleWebhook() {
+	def srcRepoName = env.gitlabSourceRepoName
+	
+	if (srcRepoName) {
+		echo "Triggered via ${env.gitlabSourceRepoHomepage}"
+		
+		if (["Automation_CI", "Automation_testonline", "Automation_predeploy", "smokeTest_online"].contains(srcRepoName)) {
+			UPDATE = "Automation_Env.git"
+		} else if (srcRepoName == "pipeline-conf") {
+			UPDATE = "group-pipeline"
+		}
+	} else {
+		echo "Triggered via manual clicking"
+	}
+}
+
+/*
 ** Pull from remote Git repository to the specified agent.
 ** The remote repository will be pulled several times, each time to a directory named with branch if passed a list.
 */
@@ -81,36 +100,8 @@ def pull(String repoName, String repoUrl, branch, String label) {
 }
 
 stage("set environment variables") {
-	echo "gitlabBranch: ${env.gitlabBranch}"
-	echo "gitlabSourceBranch: ${env.gitlabSourceBranch}"
-	echo "gitlabActionType: ${env.gitlabActionType}"
-	echo "gitlabUserName: ${env.gitlabUserName}"
-	echo "gitlabUserEmail: ${env.gitlabUserEmail}"
-	echo "gitlabSourceRepoHomepage: ${env.gitlabSourceRepoHomepage}"
-	echo "gitlabSourceRepoName: ${env.gitlabSourceRepoName}"
-	echo "gitlabSourceNamespace: ${env.gitlabSourceNamespace}"
-	echo "gitlabSourceRepoURL: ${env.gitlabSourceRepoURL}"
-	echo "gitlabSourceRepoSshUrl: ${env.gitlabSourceRepoSshUrl}"
-	echo "gitlabSourceRepoHttpUrl: ${env.gitlabSourceRepoHttpUrl}"
-	echo "gitlabMergeRequestTitle: ${env.gitlabMergeRequestTitle}"
-	echo "gitlabMergeRequestDescription: ${env.gitlabMergeRequestDescription}"
-	echo "gitlabMergeRequestId: ${env.gitlabMergeRequestId}"
-	echo "gitlabMergeRequestIid: ${env.gitlabMergeRequestIid}"
-	echo "gitlabMergeRequestState: ${env.gitlabMergeRequestState}"
-	echo "gitlabMergedByUser: ${env.gitlabMergedByUser}"
-	echo "gitlabMergeRequestAssignee: ${env.gitlabMergeRequestAssignee}"
-	echo "gitlabMergeRequestLastCommit: ${env.gitlabMergeRequestLastCommit}"
-	echo "gitlabMergeRequestTargetProjectId: ${env.gitlabMergeRequestTargetProjectId}"
-	echo "gitlabTargetBranch: ${env.gitlabTargetBranch}"
-	echo "gitlabTargetRepoName: ${env.gitlabTargetRepoName}"
-	echo "gitlabTargetNamespace: ${env.gitlabTargetNamespace}"
-	echo "gitlabTargetRepoSshUrl: ${env.gitlabTargetRepoSshUrl}"
-	echo "gitlabTargetRepoHttpUrl: ${env.gitlabTargetRepoHttpUrl}"
-	echo "gitlabBefore: ${env.gitlabBefore}"
-	echo "gitlabAfter: ${env.gitlabAfter}"
-	echo "gitlabTriggerPhrase: ${env.gitlabTriggerPhrase}"
-
     parseJobName()
+	handleWebhook()
 
     AGENT_LABEL = ENV_MAP[STAGE]['label']
     echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
