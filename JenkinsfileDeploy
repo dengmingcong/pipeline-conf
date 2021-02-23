@@ -86,7 +86,7 @@ def pull(String repoName, String repoUrl, branch, String label) {
 				dstDir = "${localRepoDir}/${it}"
 				sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
 				echo "Pulling branch ${it} to directory ${dstDir}"
-				checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+				checkout([$class: 'GitSCM', branches: [[name: "refs/remotes/origin/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
 			}
 		}
 	} else if (branch instanceof String) {
