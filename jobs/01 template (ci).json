@@ -1,6 +1,6 @@
 {
     "git": {
-        "branch": "Raigor"
+        "branch": "Yukin"
     },
     "jmeter": {
         "jmx": "testplans/AirHumidifier/Classic200S_JP/WiFiBTOnboardingNotify_AirHumidifier_Classic200S_JP.jmx"
