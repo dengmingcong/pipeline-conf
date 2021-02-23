@@ -77,7 +77,7 @@ def handleWebhook() {
 ** The remote repository will be pulled several times, each time to a directory named with branch if passed a list.
 */
 def pull(String repoName, String repoUrl, branch, String label) {
-    echo "Begin to sync repository ${repoUrl}"
+    echo "Begin to sync repository: ${repoUrl}, branches: ${branch}"
     def localRepoDir = "${QA_HOME}/${repoName}"
 	
 	if (branch instanceof List) {
