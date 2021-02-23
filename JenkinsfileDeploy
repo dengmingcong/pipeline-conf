@@ -57,6 +57,37 @@ def parseJobName() {
 ** Set UPDATE based on "${env.gitlabSourceRepoName}"
 */
 def handleWebhook() {
+
+	echo env.gitlabBranch
+	echo env.gitlabSourceBranch
+	echo env.gitlabActionType
+	echo env.gitlabUserName
+	echo env.gitlabUserUsername
+	echo env.gitlabUserEmail
+	echo env.gitlabSourceRepoHomepage
+	echo env.gitlabSourceRepoName
+	echo env.gitlabSourceNamespace
+	echo env.gitlabSourceRepoURL
+	echo env.gitlabSourceRepoSshUrl
+	echo env.gitlabSourceRepoHttpUrl
+	echo env.gitlabMergeRequestTitle
+	echo env.gitlabMergeRequestDescription
+	echo env.gitlabMergeRequestId
+	echo env.gitlabMergeRequestIid
+	echo env.gitlabMergeRequestState
+	echo env.gitlabMergedByUser
+	echo env.gitlabMergeRequestAssignee
+	echo env.gitlabMergeRequestLastCommit
+	echo env.gitlabMergeRequestTargetProjectId
+	echo env.gitlabTargetBranch
+	echo env.gitlabTargetRepoName
+	echo env.gitlabTargetNamespace
+	echo env.gitlabTargetRepoSshUrl
+	echo env.gitlabTargetRepoHttpUrl
+	echo env.gitlabBefore
+	echo env.gitlabAfter
+	echo env.gitlabTriggerPhrase
+
 	def srcRepoName = env.gitlabSourceRepoName
 	
 	if (srcRepoName) {
