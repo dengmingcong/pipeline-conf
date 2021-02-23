@@ -86,7 +86,7 @@ def pull(String repoName, String repoUrl, branch, String label) {
 				dstDir = "${localRepoDir}/${it}"
 				sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
 				echo "Pulling branch ${it} to directory ${dstDir}"
-				checkout([$class: 'GitSCM', branches: [[name: "refs/remotes/origin/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+				checkout([$class: 'GitSCM', branches: [[name: "refs/remotes/origin/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[name: 'origin', url: "${repoUrl}"]]])
 			}
 		}
 	} else if (branch instanceof String) {
@@ -94,7 +94,7 @@ def pull(String repoName, String repoUrl, branch, String label) {
 			dstDir = "${localRepoDir}"
 			sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
 			echo "Pulling branch ${branch} to directory ${dstDir}"
-			checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+			checkout([$class: 'GitSCM', branches: [[name: "refs/remotes/origin/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[name: 'origin', url: "${repoUrl}"]]])
 		}
 	}
 }
@@ -127,13 +127,6 @@ if (["all", "pipeline-conf.git", "group-pipeline"].contains(UPDATE)) {
 		def repoName = "pipeline-conf"
 		def repoUrl = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
 		def branches = ["master", "cn"]
-		
-		/* node("master") {
-			checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "git@fangcun.vesync.com:testTeam/pipeline-conf.git"]]])
-			sh "git checkout master"
-			sh "git remote add langitlab ${repoUrl} || echo 'already exist'"
-			sh "git push langitlab --all"
-		} */
 		
 		NODE_LIST.each {
 			pull(repoName, repoUrl, branches, it)
