@@ -15,6 +15,9 @@ AGENT_LABEL = ""
 BUSINESS_REPO_NAME = ""
 BUSINESS_REPO_URL = ""
 BUSINESS_REPO_BRANCHES = ""
+PIPELINE_CONF = "pipeline-conf"
+PIPELINE_CONF_URL = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
+PIPELINE_CONF_BRANCHES = ["master", "cn"]
 NODE_LIST = []
 UPDATE = params.update
 DEBUG = false
@@ -54,40 +57,10 @@ def parseJobName() {
 }
 
 /*
-** Set UPDATE based on "${env.gitlabSourceRepoName}"
+** 1. set UPDATE based on "${env.gitlabSourceRepoName}"
+** 2. set BUSINESS_REPO_BRANCHES to specific branch
 */
 def handleWebhook() {
-
-	echo env.gitlabBranch
-	echo env.gitlabSourceBranch
-	echo env.gitlabActionType
-	echo env.gitlabUserName
-	echo env.gitlabUserUsername
-	echo env.gitlabUserEmail
-	echo env.gitlabSourceRepoHomepage
-	echo env.gitlabSourceRepoName
-	echo env.gitlabSourceNamespace
-	echo env.gitlabSourceRepoURL
-	echo env.gitlabSourceRepoSshUrl
-	echo env.gitlabSourceRepoHttpUrl
-	echo env.gitlabMergeRequestTitle
-	echo env.gitlabMergeRequestDescription
-	echo env.gitlabMergeRequestId
-	echo env.gitlabMergeRequestIid
-	echo env.gitlabMergeRequestState
-	echo env.gitlabMergedByUser
-	echo env.gitlabMergeRequestAssignee
-	echo env.gitlabMergeRequestLastCommit
-	echo env.gitlabMergeRequestTargetProjectId
-	echo env.gitlabTargetBranch
-	echo env.gitlabTargetRepoName
-	echo env.gitlabTargetNamespace
-	echo env.gitlabTargetRepoSshUrl
-	echo env.gitlabTargetRepoHttpUrl
-	echo env.gitlabBefore
-	echo env.gitlabAfter
-	echo env.gitlabTriggerPhrase
-
 	def srcRepoName = env.gitlabSourceRepoName
 	
 	if (srcRepoName) {
@@ -95,12 +68,16 @@ def handleWebhook() {
 		
 		if (["Automation_CI", "Automation_testonline", "Automation_predeploy", "smokeTest_online"].contains(srcRepoName)) {
 			UPDATE = "Automation_Env.git"
-		} else if (srcRepoName == "pipeline-conf") {
+			BUSINESS_REPO_BRANCHES = [env.gitlabBranch]
+		} else if (srcRepoName == "${PIPELINE_CONF}") {
 			UPDATE = "group-pipeline"
+			PIPELINE_CONF_BRANCHES = [env.gitlabBranch]
 		}
+		echo "Change from branch ${env.gitlabBranch} was pushed, update branch ${env.gitlabBranch} only"
 	} else {
 		echo "Triggered via manual clicking"
 	}
+	echo "UPDATE is set to: ${UPDATE}"
 }
 
 /*
@@ -111,29 +88,18 @@ def pull(String repoName, String repoUrl, branch, String label) {
     echo "Begin to sync repository: ${repoUrl}, branches: ${branch}"
     def localRepoDir = "${QA_HOME}/${repoName}"
 	
-	if (branch instanceof List) {
-		node(label) {
-			branch.each {
-				dstDir = "${localRepoDir}/${it}"
-				sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
-				echo "Pulling branch ${it} to directory ${dstDir}"
-				checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[name: 'origin', refspec: "+refs/heads/${it}:refs/remotes/origin/${it}", url: "${repoUrl}"]]])
-			}
-		}
-	} else if (branch instanceof String) {
-		node(label) {
-			dstDir = "${localRepoDir}"
+	node(label) {
+		branch.each {
+			dstDir = "${localRepoDir}/${it}"
 			sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
-			echo "Pulling branch ${branch} to directory ${dstDir}"
-			checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true], [$class: 'LocalBranch', localBranch: "${it}"]], submoduleCfg: [], userRemoteConfigs: [[name: 'origin', url: "${repoUrl}"]]])
+			echo "Pulling branch ${it} to directory ${dstDir}"
+			checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[name: 'origin', refspec: "+refs/heads/${it}:refs/remotes/origin/${it}", url: "${repoUrl}"]]])
 		}
 	}
 }
 
 stage("set environment variables") {
     parseJobName()
-	handleWebhook()
-	echo "UPDATE is set to: ${UPDATE}"
 
     AGENT_LABEL = ENV_MAP[STAGE]['label']
     echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
@@ -141,6 +107,8 @@ stage("set environment variables") {
     BUSINESS_REPO_NAME = ENV_MAP[STAGE]["businessRepoName"]
     BUSINESS_REPO_URL = ENV_MAP[STAGE]["businessRepoUrl"]
     BUSINESS_REPO_BRANCHES = ENV_MAP[STAGE]["businessRepoBranches"]
+	
+	handleWebhook()
 
     NODE_LIST = nodesByLabel label: "${AGENT_LABEL}", offline: false
 }
@@ -155,20 +123,14 @@ if (["all", "Automation_Env.git"].contains(UPDATE)) {
 
 if (["all", "pipeline-conf.git", "group-pipeline"].contains(UPDATE)) {
 	stage("update pipeline-conf.git") {
-		def repoName = "pipeline-conf"
-		def repoUrl = "git@fangcun.vesync.com:testTeam/pipeline-conf.git"
-		def branches = ["master", "cn"]
-		
 		NODE_LIST.each {
-			pull(repoName, repoUrl, branches, it)
+			pull(PIPELINE_CONF, PIPELINE_CONF_URL, PIPELINE_CONF_BRANCHES, it)
 		}
 	}
 }
 
 if (["all", "jmeter files", "group-pipeline"].contains(UPDATE)) {
 	stage("update jmeter files") {
-		def repoName = "pipeline-conf"
-		
 		NODE_LIST.each {
 			node(it) {
 				// copy directory "/usr/local/jmeter40" to "${QA_HOME}" if string "debug" occurs in job name.
@@ -176,9 +138,9 @@ if (["all", "jmeter files", "group-pipeline"].contains(UPDATE)) {
 					sh "[[ -d ${JMETER_HOME} ]] || cp -r /usr/local/jmeter40 ${QA_HOME}"
 				}
 				
-				sh "cp ${QA_HOME}/${repoName}/master/bin/*.groovy ${JMETER_HOME}/bin"
-				sh "cp ${QA_HOME}/${repoName}/master/lib/*.jar ${JMETER_HOME}/lib"
-				sh "cp ${QA_HOME}/${repoName}/master/resources/*.xsl ${JMETER_HOME}/extras"
+				sh "cp ${QA_HOME}/${PIPELINE_CONF}/master/bin/*.groovy ${JMETER_HOME}/bin"
+				sh "cp ${QA_HOME}/${PIPELINE_CONF}/master/lib/*.jar ${JMETER_HOME}/lib"
+				sh "cp ${QA_HOME}/${PIPELINE_CONF}/master/resources/*.xsl ${JMETER_HOME}/extras"
 			}
 		}
 	}
