@@ -131,7 +131,6 @@ if (["all", "nacos-jmeter.git", "nacos (group)"].contains(UPDATE)) {
 	}
 }
 
-
 if (["all", "nacos snapshot", "nacos (group)"].contains(UPDATE)) {
 	stage("update nacos snapshot") {
 		def repoName = "nacos-jmeter"
