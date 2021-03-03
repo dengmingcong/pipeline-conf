@@ -1,24 +1,66 @@
 #!/bin/bash/groovy
 
+/*
+** Deploy files to Jenkins agents.
+**
+** The default values of global variables are set for "debug", not for "stable".
+**  
+** For deploying 'stable' (not start with 'debug')
+**   - Must choose one git tag when building
+**   - All git repositories will be updated
+**   - Cannot be triggered via webhook
+**
+** For deploying 'debug' (starts with 'debug')
+**   - No need to choose git tag when building, latest code of the preset branch will be fetched
+**   - Updating one repository is supported
+**   - Can be triggered via webhook
+*/
+
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '5')), disableConcurrentBuilds(), gitLabConnection('')])
 
 ENV_MAP = [
-	ci: [label: "fullTest", businessRepoName: "cloud-api-test", businessRepoUrl: "git@fangcun.vesync.com:testTeam/cloud-api-test.git", businessRepoBranches: ["master"]],
-	testonline: [label: "Predeploy-smokeTest", businessRepoName: "cloud-api-test", businessRepoUrl: "git@fangcun.vesync.com:testTeam/cloud-api-test.git", businessRepoBranches: ["master"]], 
-	predeploy: [label: "Predeploy-smokeTest", businessRepoName: "cloud-api-test", businessRepoUrl: "git@fangcun.vesync.com:testTeam/cloud-api-test.git", businessRepoBranches: ["master"]]
+	ci: [label: "fullTest"],
+	testonline: [label: "Predeploy-smokeTest"], 
+	predeploy: [label: "Predeploy-smokeTest"]
 ]
-JMETER_HOME = "/usr/local/jmeter40"
-QA_HOME = "/data/qa"
-STAGE = ""
-AGENT_LABEL = ""
-BUSINESS_REPO_NAME = ""
-BUSINESS_REPO_URL = ""
-BUSINESS_REPO_BRANCHES = ""
-NODE_LIST = []
+
+// define global variables for later usage
+// treat as tag if true, branch if false
+BUSINESS_REPO_NAME = "cloud-api-test"
+BUSINESS_REPO_URL = "git@fangcun.vesync.com:testTeam/${BUSINESS_REPO_NAME}.git"
+BUSINESS_REPO_BRANCH = "master"  // using tag (instead of branch) is acceptable
+PIPELINE_CONF_NAME = "pipeline-conf"
+PIPELINE_CONF_URL = "git@fangcun.vesync.com:testTeam/${PIPELINE_CONF_NAME}.git"
+PIPELINE_CONF_BRANCH = "dev"
+NACOS_JMETER_NAME = "nacos-jmeter"
+NACOS_JMETER_URL = "git@fangcun.vesync.com:testTeam/${NACOS_JMETER_NAME}.git"
+NACOS_JMETER_BRANCH = "master"
+
+// Determine what to deploy, one of ["all", "cloud-api-test.git", "pipeline-conf.git", "nacos-jmeter.git", "jmeter files", "nacos snapshot"]
 UPDATE = params.update
 
+QA_HOME = "/data/qa"
+DEPLOY_TO = "${QA_HOME}/deploy/debug"
+JMETER_HOME = "${DEPLOY_TO}/jmeter40"
+STAGE = ""
+AGENT_LABEL = ""
+NODE_LIST = []
+DEBUG = true
+
+// only for deploying "stable"
+UPDATE_ON_SAME_VERSION = param["update on same version"]
+NEED_UPDATE = true
+LOCAL_VERSION_YML = "local-version.yml"
+
+
 /*
-** Determine test stage based on Jenkins job name.
+** 1. determine test stage based on Jenkins job name.
+** 2. if job name does not start with "debug", then
+**   - set DEBUG to false
+**   - set DEPLOY_TO to "${QA_HOME}/deploy/stable"
+**   - set JMETER_HOME to "/usr/local/jmeter40"
+**   - set BUSINESS_REPO_BRANCH to "refs/tags/${params.tagName}"
+**   - set UPDATE to "all"
 */
 def parseJobName() {
     def jobNameLowerCase = env.JOB_NAME.toLowerCase()
@@ -32,113 +74,167 @@ def parseJobName() {
     } else {
     	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
     }
+	
+	if (!jobNameLowerCase.startswith("debug")) {
+		DEBUG = false
+		DEPLOY_TO = "${QA_HOME}/deploy/stable"
+		echo "Word 'debug' not found in job name, deploy all files to directory ${DEPLOY_TO}."
+		JMETER_HOME = "/usr/local/jmeter40"
+		BUSINESS_REPO_BRANCH = "${params.tagName}"
+		UPDATE = "all"
+	} else {
+		echo "Word 'debug' found in job name, deploy all files to directory ${DEPLOY_TO}."
+	}
+}
+
+/*
+** set UPDATE based on "${env.gitlabSourceRepoName}"
+** 
+** Note: Only push to specific branch can trigger building.
+*/
+def handleWebhook() {
+	def srcRepoName = env.gitlabSourceRepoName
+	
+	if (srcRepoName) {
+		if (DEBUG) {
+			echo "Triggered via ${env.gitlabSourceRepoHomepage}"
+			
+			if (srcRepoName == "${BUSINESS_REPO_NAME}") {
+				UPDATE = "cloud-api-test.git"
+			} else if (srcRepoName == "${PIPELINE_CONF_NAME}") {
+				UPDATE = "group-pipeline"
+			} else if (srcRepoName == "${NACOS_JMETER_NAME}") {
+				UPDATE = "nacos-jmeter.git"
+			}
+			echo "Change from branch ${env.gitlabBranch} was pushed, get updates from branch ${env.gitlabBranch}"
+		} else {
+			error "Only job whose name starts with 'debug' supports webhook now."
+		}
+	} else {
+		echo "Triggered via manual clicking"
+	}
+	echo "UPDATE is set to: ${UPDATE}"
 }
 
 /*
 ** Pull from remote Git repository to the specified agent.
-** The remote repository will be pulled several times, each time to a directory named with branch if passed a list.
+** The remote repository will be pulled to a directory named with repository.
 */
-def pull(String repoName, String repoUrl, branch, String label) {
+def pull(String repoName, String repoUrl, branch, asTag) {
     echo "Begin to sync repository ${repoUrl}"
-    def localRepoDir = "${QA_HOME}/${repoName}"
+    def localRepoDir = "${DEPLOY_TO}/${repoName}"
+	def targetVersion = ""
 	
-	if (branch instanceof List) {
-		node(label) {
-			branch.each {
-				dstDir = "${localRepoDir}/${it}"
-				sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
-				echo "Pulling branch ${it} to directory ${dstDir}"
-				checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${it}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
-			}
-		}
-	} else if (branch instanceof String) {
-		node(label) {
-			dstDir = "${localRepoDir}"
-			sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
-			echo "Pulling branch ${branch} to directory ${dstDir}"
-			checkout([$class: 'GitSCM', branches: [[name: "refs/heads/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
-		}
+	if (trackTag) {
+		targetVersion = "refs/tags/${branch}"
+	} else {
+		targetVersion = "refs/heads/${branch}"
+	}
+	
+	dstDir = "${localRepoDir}"
+	sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
+	echo "Pulling repository ${repoName} to directory ${dstDir}"
+	checkout([$class: 'GitSCM', branches: [[name: "${targetVersion}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+}
+
+def updateBusinessRepo() {  
+	echo "UPDATE ${BUSINESS_REPO_NAME}.git"
+	pull(BUSINESS_REPO_NAME, BUSINESS_REPO_URL, BUSINESS_REPO_BRANCH)
+	// get versions of dependent repositories
+	setDependentRepoTag("${DEPLOY_TO}/requirements.yml")
+	// update local version already deployed
+	sh "rm ${DEPLOY_TO}/${LOCAL_VERSION_YML}"
+	writeYaml file: "${DEPLOY_TO}/${LOCAL_VERSION_YML}", data: [BUSINESS_REPO_NAME: BUSINESS_REPO_BRANCH]
+}
+
+def updatePipelineConf() { 
+	echo "UPDATE ${PIPELINE_CONF_NAME}.git"
+	pull(PIPELINE_CONF_BRANCH, PIPELINE_CONF_URL, PIPELINE_CONF_BRANCH) 
+}
+
+def updateNacosJmeterRepo() {
+	echo "UPDATE ${NACOS_JMETER_NAME}.git"
+	pull(NACOS_JMETER_NAME, NACOS_JMETER_URL, NACOS_JMETER_BRANCH) 
+}
+def updateJmeterDependencies() {
+	echo "UPDATE groovy, jar, xsl (copy from ${PIPELINE_CONF_NAME})"
+	sh "cp ${DEPLOY_TO}/${PIPELINE_CONF_NAME}/bin/*.groovy ${JMETER_HOME}/bin"
+	sh "cp ${DEPLOY_TO}/${PIPELINE_CONF_NAME}/lib/*.jar ${JMETER_HOME}/lib"
+	sh "cp ${DEPLOY_TO}/${PIPELINE_CONF_NAME}/resources/*.xsl ${JMETER_HOME}/extras"
+}
+
+def updateNacosSnapshot() {
+	echo "UPDATE Nacos snapshot"
+	sh "cd ${DEPLOY_TO}/${repoName}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ${STAGE} ../snapshot"
+}
+
+/*
+** set PIPELINE_CONF_BRANCH, NACOS_JMETER_BRANCH based on file "requirementsYml" when deploy "stable"
+*/
+def setDependentRepoTag(requirementsYml) {
+	if (!DEBUG) {
+		def requirements = readYaml file: "${requirementsYml}"
+		
+		PIPELINE_CONF_BRANCH = requirements[PIPELINE_CONF_NAME]
+		NACOS_JMETER_BRANCH = requirements[NACOS_JMETER_NAME]
+	}
+}
+
+/*
+** set NEED_UPDATE after comparing versions.
+*/
+def compareVersion(versionToBeDeployed, localVersionYml) {
+	def localVersions = readYaml file: localVersionYml
+	def localVersion = localVersions[BUSINESS_REPO_BRANCH]
+	if (localVersion == versionToBeDeployed && UPDATE_ON_SAME_VERSION == false) {
+		NEED_UPDATE = false
 	}
 }
 
 stage("set environment variables") {
     parseJobName()
+	handleWebhook()
 
     AGENT_LABEL = ENV_MAP[STAGE]['label']
     echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
-
-    BUSINESS_REPO_NAME = ENV_MAP[STAGE]["businessRepoName"]
-    BUSINESS_REPO_URL = ENV_MAP[STAGE]["businessRepoUrl"]
-    BUSINESS_REPO_BRANCHES = ENV_MAP[STAGE]["businessRepoBranches"]
-
     NODE_LIST = nodesByLabel label: "${AGENT_LABEL}", offline: false
 }
 
-if (["all", "agent info"].contains(UPDATE)) {
-	stage("get agent info") {
-		NODE_LIST.each {
-			node(it) {
-				sh "ifconfig"
-				sh "hostname"
+NODE_LIST.each {
+	node(it) {
+		stage("[${it}] print agent info") {
+			sh "ifconfig"
+			sh "hostname"
+		}
+		
+		stage("[${it}] deploy") {
+			// deploy "stable"
+			if (!DEBUG) {
+				compareVersion(BUSINESS_REPO_BRANCH, "${DEPLOY_TO}/${LOCAL_VERSION_YML}")
+				if (NEED_UPDATE) {
+					updateBusinessRepo()
+					updatePipelineConf()
+					updateNacosJmeterRepo()
+					updateJmeterDependencies()
+					updateNacosSnapshot()
+				}
+			}
+			
+			// deploy "debug"
+			if (["all", "cloud-api-test.git"].contains(UPDATE)) {
+				updateBusinessRepo()
+			}
+			if (["all", "pipeline-conf.git"].contains(UPDATE)) {
+				updatePipelineConf()
+			}
+			if (["all", "nacos-jmeter.git", "nacos (group)"].contains(UPDATE)) {
+				updateNacosJmeterRepo()
+			}
+			if (["all", "nacos snapshot", "nacos (group)"].contains(UPDATE)) {
+				updateNacosSnapshot()
 			}
 		}
+
 	}
 }
 
-if (["all", "cloud-api-test.git"].contains(UPDATE)) {
-	stage("update ${BUSINESS_REPO_NAME}.git") {
-		NODE_LIST.each {
-			pull(BUSINESS_REPO_NAME, BUSINESS_REPO_URL, BUSINESS_REPO_BRANCHES, it)
-		}
-	}
-}
-
-if (["all", "pipeline-conf.git"].contains(UPDATE)) {
-	stage("update pipeline-conf.git") {
-		def repoName = "pipeline-conf"
-		def repoUrl = "git@fangcun.vesync.com:testTeam/${repoName}.git"
-		def branches = ["deploy"]
-		
-		NODE_LIST.each {
-			pull(repoName, repoUrl, branches, it)
-		}
-	}
-}
-
-if (["all", "jmeter files"].contains(UPDATE)) {
-	stage("update jmeter files") {
-		def repoName = "pipeline-conf"
-		
-		NODE_LIST.each {
-			node(it) {
-				sh "cp ${QA_HOME}/${repoName}/master/bin/*.groovy ${JMETER_HOME}/bin"
-				sh "cp ${QA_HOME}/${repoName}/master/lib/*.jar ${JMETER_HOME}/lib"
-				sh "cp ${QA_HOME}/${repoName}/master/resources/*.xsl ${JMETER_HOME}/extras"
-			}
-		}
-	}
-}
-
-if (["all", "nacos-jmeter.git", "nacos (group)"].contains(UPDATE)) {
-	stage("update nacos-jmeter.git") {
-		def repoName = "nacos-jmeter"
-		def repoUrl = "git@fangcun.vesync.com:testTeam/nacos-jmeter.git"
-		def branch = "master"
-		
-		NODE_LIST.each {
-			pull(repoName, repoUrl, branch, it)
-		}
-	}
-}
-
-if (["all", "nacos snapshot", "nacos (group)"].contains(UPDATE)) {
-	stage("update nacos snapshot") {
-		def repoName = "nacos-jmeter"
-		
-		NODE_LIST.each {
-			node(it) {
-				sh "cd ${QA_HOME}/${repoName}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ${STAGE} ../snapshot"
-			}
-		}
-	}
-}
