@@ -5,12 +5,12 @@
 **
 ** The default values of global variables are set for "debug", not for "stable".
 **  
-** For deploying 'stable' (not start with 'debug')
+** For deploying 'stable' (not contain 'debug')
 **   - Must choose one git tag when building
 **   - All git repositories will be updated
 **   - Cannot be triggered via webhook
 **
-** For deploying 'debug' (starts with 'debug')
+** For deploying 'debug' (contain 'debug')
 **   - No need to choose git tag when building, latest code of the preset branch will be fetched
 **   - Updating one repository is supported
 **   - Can be triggered via webhook
@@ -46,16 +46,17 @@ STAGE = ""
 AGENT_LABEL = ""
 NODE_LIST = []
 DEBUG = true
+TRACK_AS_TAG = false
 
 // only for deploying "stable"
-UPDATE_ON_SAME_VERSION = param["update on same version"]
+UPDATE_ON_SAME_VERSION = params["update on same version"]
 NEED_UPDATE = true
 LOCAL_VERSION_YML = "local-version.yml"
 
 
 /*
 ** 1. determine test stage based on Jenkins job name.
-** 2. if job name does not start with "debug", then
+** 2. if job name does not contain "debug", then
 **   - set DEBUG to false
 **   - set DEPLOY_TO to "${QA_HOME}/deploy/stable"
 **   - set JMETER_HOME to "/usr/local/jmeter40"
@@ -75,7 +76,7 @@ def parseJobName() {
     	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', or 'predeploy' (case insensitive)."
     }
 	
-	if (!jobNameLowerCase.startswith("debug")) {
+	if (!jobNameLowerCase.contains("debug")) {
 		DEBUG = false
 		DEPLOY_TO = "${QA_HOME}/deploy/stable"
 		echo "Word 'debug' not found in job name, deploy all files to directory ${DEPLOY_TO}."
@@ -108,7 +109,7 @@ def handleWebhook() {
 			}
 			echo "Change from branch ${env.gitlabBranch} was pushed, get updates from branch ${env.gitlabBranch}"
 		} else {
-			error "Only job whose name starts with 'debug' supports webhook now."
+			error "Only job whose name contains with 'debug' supports webhook now."
 		}
 	} else {
 		echo "Triggered via manual clicking"
@@ -120,18 +121,18 @@ def handleWebhook() {
 ** Pull from remote Git repository to the specified agent.
 ** The remote repository will be pulled to a directory named with repository.
 */
-def pull(String repoName, String repoUrl, branch, asTag) {
+def pull(String repoName, String repoUrl, branch) {
     echo "Begin to sync repository ${repoUrl}"
     def localRepoDir = "${DEPLOY_TO}/${repoName}"
 	def targetVersion = ""
 	
-	if (trackTag) {
+	if (TRACK_AS_TAG) {
 		targetVersion = "refs/tags/${branch}"
 	} else {
 		targetVersion = "refs/heads/${branch}"
 	}
 	
-	dstDir = "${localRepoDir}"
+	dstDir = localRepoDir
 	sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
 	echo "Pulling repository ${repoName} to directory ${dstDir}"
 	checkout([$class: 'GitSCM', branches: [[name: "${targetVersion}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
@@ -140,16 +141,11 @@ def pull(String repoName, String repoUrl, branch, asTag) {
 def updateBusinessRepo() {  
 	echo "UPDATE ${BUSINESS_REPO_NAME}.git"
 	pull(BUSINESS_REPO_NAME, BUSINESS_REPO_URL, BUSINESS_REPO_BRANCH)
-	// get versions of dependent repositories
-	setDependentRepoTag("${DEPLOY_TO}/requirements.yml")
-	// update local version already deployed
-	sh "rm ${DEPLOY_TO}/${LOCAL_VERSION_YML}"
-	writeYaml file: "${DEPLOY_TO}/${LOCAL_VERSION_YML}", data: [BUSINESS_REPO_NAME: BUSINESS_REPO_BRANCH]
 }
 
 def updatePipelineConf() { 
 	echo "UPDATE ${PIPELINE_CONF_NAME}.git"
-	pull(PIPELINE_CONF_BRANCH, PIPELINE_CONF_URL, PIPELINE_CONF_BRANCH) 
+	pull(PIPELINE_CONF_NAME, PIPELINE_CONF_URL, PIPELINE_CONF_BRANCH) 
 }
 
 def updateNacosJmeterRepo() {
@@ -165,7 +161,7 @@ def updateJmeterDependencies() {
 
 def updateNacosSnapshot() {
 	echo "UPDATE Nacos snapshot"
-	sh "cd ${DEPLOY_TO}/${repoName}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ${STAGE} ../snapshot"
+	sh "cd ${DEPLOY_TO}/${NACOS_JMETER_NAME}/bin; [[ -d ../snapshot ]] || mkdir ../snapshot; python3 make_snapshot.py ${STAGE} ../snapshot"
 }
 
 /*
@@ -210,9 +206,16 @@ NODE_LIST.each {
 		stage("[${it}] deploy") {
 			// deploy "stable"
 			if (!DEBUG) {
+				TRACK_AS_TAG = true
 				compareVersion(BUSINESS_REPO_BRANCH, "${DEPLOY_TO}/${LOCAL_VERSION_YML}")
 				if (NEED_UPDATE) {
 					updateBusinessRepo()
+					// get versions of dependent repositories
+					setDependentRepoTag("${DEPLOY_TO}/requirements.yml")
+					// update local version already deployed
+					sh "[[ ! -e ${DEPLOY_TO}/${LOCAL_VERSION_YML} ]] || rm ${DEPLOY_TO}/${LOCAL_VERSION_YML}"
+					writeYaml file: "${DEPLOY_TO}/${LOCAL_VERSION_YML}", data: ["${BUSINESS_REPO_NAME}": "${BUSINESS_REPO_BRANCH}"]
+					
 					updatePipelineConf()
 					updateNacosJmeterRepo()
 					updateJmeterDependencies()
