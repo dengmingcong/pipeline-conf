@@ -45,6 +45,7 @@
                 #right-panel .trail { border-top: 1px solid #b4b4b4 }
                 
                 .all-passed { color: green; font-size: 2rem; padding: 2em;}
+				.aborted-failure { color: red; font-size: 2rem; padding: 2em;}
                 
             ]]></style>
             <script type="text/javascript"><![CDATA[
@@ -76,14 +77,20 @@
                 
                 const selectOnLoad = function decideWhichElementShouldBeSelectedWhenDocumentLoaded() {
                     let firstFailureHttpSample = document.querySelector(".http-sample > .failure");
-                    if (firstFailureHttpSample) {
-                        last_selected = firstFailureHttpSample;
-                        last_selected.classList.add("selected");
-                        document.getElementById("right-panel").innerHTML = firstFailureHttpSample.nextSibling.innerHTML;
-                    } else {
-                        document.getElementById("right-panel").innerHTML = document.getElementById("all-passed").innerHTML;
-                        document.querySelector("#right-panel > div").classList.add("all-passed");
-                    }
+					let firstAbortedHttpSample = document.querySelector(".aborted");
+					if(firstAbortedHttpSample){
+						document.getElementById("right-panel").innerHTML = document.getElementById("aborted-failure").innerHTML;
+						document.querySelector("#right-panel > div").classList.add("aborted-failure");
+					} else {
+						if (firstFailureHttpSample) {
+							last_selected = firstFailureHttpSample;
+							last_selected.classList.add("selected");
+							document.getElementById("right-panel").innerHTML = firstFailureHttpSample.nextSibling.innerHTML;
+						} else {
+							document.getElementById("right-panel").innerHTML = document.getElementById("all-passed").innerHTML;
+							document.querySelector("#right-panel > div").classList.add("all-passed");
+						}
+					}
                 }
                 
                 const titleSelected = function handlerWhenTitleWasClicked(event) {
@@ -220,6 +227,18 @@
             <div id="right-panel"></div>
             <div id="all-passed" class="hidden">
                 <div>All testcases passed.</div>
+            </div>
+			
+			<div id="aborted-failure" class="hidden">
+				<xsl:choose>
+					<xsl:when test="@aborted = 'true'">
+						<xsl:attribute name="class">hidden aborted</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="class">hidden</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+                <div>此次测试异常中断（原因可能是超时或手动停止），报告内容不完整，只包含中断前的执行内容</div>
             </div>
         </body>
         </html>
