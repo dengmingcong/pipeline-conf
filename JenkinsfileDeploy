@@ -60,7 +60,7 @@ LOCAL_VERSION_YML = "local-version.yml"
 **   - set DEBUG to false
 **   - set DEPLOY_TO to "${QA_HOME}/deploy/stable"
 **   - set JMETER_HOME to "/usr/local/jmeter40"
-**   - set BUSINESS_REPO_BRANCH to "refs/tags/${params.tagName}"
+**   - set BUSINESS_REPO_BRANCH to "params.tagName"
 **   - set UPDATE to "all"
 */
 def parseJobName() {
@@ -81,7 +81,7 @@ def parseJobName() {
 		DEPLOY_TO = "${QA_HOME}/deploy/stable"
 		echo "Word 'debug' not found in job name, deploy all files to directory ${DEPLOY_TO}."
 		JMETER_HOME = "/usr/local/jmeter40"
-		BUSINESS_REPO_BRANCH = "${params.tagName}"
+		BUSINESS_REPO_BRANCH = params.tagName
 		UPDATE = "all"
 	} else {
 		echo "Word 'debug' found in job name, deploy all files to directory ${DEPLOY_TO}."
@@ -134,8 +134,8 @@ def pull(String repoName, String repoUrl, branch) {
 	
 	dstDir = localRepoDir
 	sh "[[ -d ${dstDir} ]] || mkdir -p ${dstDir}"
-	echo "Pulling repository ${repoName} to directory ${dstDir}"
-	checkout([$class: 'GitSCM', branches: [[name: "${targetVersion}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: true, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
+	echo "Pulling repository ${repoName} to directory ${dstDir}, target reversion ${targetVersion}"
+	checkout([$class: 'GitSCM', branches: [[name: "${targetVersion}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${dstDir}"], [$class: 'CloneOption', noTags: false, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[url: "${repoUrl}"]]])
 }
 
 def updateBusinessRepo() {  
@@ -152,11 +152,13 @@ def updateNacosJmeterRepo() {
 	echo "UPDATE ${NACOS_JMETER_NAME}.git"
 	pull(NACOS_JMETER_NAME, NACOS_JMETER_URL, NACOS_JMETER_BRANCH) 
 }
+
+// TODO
 def updateJmeterDependencies() {
 	echo "UPDATE groovy, jar, xsl (copy from ${PIPELINE_CONF_NAME})"
-	sh "cp ${DEPLOY_TO}/${PIPELINE_CONF_NAME}/bin/*.groovy ${JMETER_HOME}/bin"
-	sh "cp ${DEPLOY_TO}/${PIPELINE_CONF_NAME}/lib/*.jar ${JMETER_HOME}/lib"
-	sh "cp ${DEPLOY_TO}/${PIPELINE_CONF_NAME}/resources/*.xsl ${JMETER_HOME}/extras"
+	sh "cp /data/qa/stable/pipeline-conf/master/bin/*.groovy ${JMETER_HOME}/bin"
+	sh "cp /data/qa/stable/pipeline-conf/master/lib/*.jar ${JMETER_HOME}/lib"
+	sh "cp /data/qa/stable/pipeline-conf/master/resources/*.xsl ${JMETER_HOME}/extras"
 }
 
 def updateNacosSnapshot() {
@@ -180,10 +182,12 @@ def setDependentRepoTag(requirementsYml) {
 ** set NEED_UPDATE after comparing versions.
 */
 def compareVersion(versionToBeDeployed, localVersionYml) {
-	def localVersions = readYaml file: localVersionYml
-	def localVersion = localVersions[BUSINESS_REPO_BRANCH]
-	if (localVersion == versionToBeDeployed && UPDATE_ON_SAME_VERSION == false) {
-		NEED_UPDATE = false
+	if (fileExists(localVersionYml)) {
+		def localVersions = readYaml file: localVersionYml
+		def localVersion = localVersions[BUSINESS_REPO_BRANCH]
+		if (localVersion == versionToBeDeployed && UPDATE_ON_SAME_VERSION == false) {
+			NEED_UPDATE = false
+		}
 	}
 }
 
@@ -211,7 +215,7 @@ NODE_LIST.each {
 				if (NEED_UPDATE) {
 					updateBusinessRepo()
 					// get versions of dependent repositories
-					setDependentRepoTag("${DEPLOY_TO}/requirements.yml")
+					setDependentRepoTag("${DEPLOY_TO}/${BUSINESS_REPO_NAME}/requirements.yml")
 					// update local version already deployed
 					sh "[[ ! -e ${DEPLOY_TO}/${LOCAL_VERSION_YML} ]] || rm ${DEPLOY_TO}/${LOCAL_VERSION_YML}"
 					writeYaml file: "${DEPLOY_TO}/${LOCAL_VERSION_YML}", data: ["${BUSINESS_REPO_NAME}": "${BUSINESS_REPO_BRANCH}"]
@@ -240,4 +244,3 @@ NODE_LIST.each {
 
 	}
 }
-
