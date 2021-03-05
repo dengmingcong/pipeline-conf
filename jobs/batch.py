@@ -192,7 +192,7 @@ def edit_file():
                         # save_as_third_regression(filename, "Predeploy")
 
                 # 修改 branch分支为指定分支，如Yukin或者master
-                save_as_master_branch(filename, "master")
+                # save_as_master_branch(filename, "master")
 
 
 def batch_update_filename():

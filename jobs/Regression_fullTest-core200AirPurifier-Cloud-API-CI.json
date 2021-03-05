@@ -1,7 +1,7 @@
 {
     "env": "ci",
     "git": {
-        "branch": "Regression_Nana"
+        "branch": "Nana"
     },
     "jmeter": {
         "jmx": "testSripts/core200AirPurifier_V1.0.jmx"

@@ -1,7 +1,7 @@
 {
-    "env": "testonline",
+    "env": "predeploy",
     "git": {
-        "branch": "Regression_master"
+        "branch": "master"
     },
     "jmeter": {
         "jmx": "testScripts/Dual200.jmx"
