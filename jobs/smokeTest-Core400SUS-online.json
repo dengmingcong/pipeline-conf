@@ -3,7 +3,7 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testplans/AirPurifier/Core400S/US/Core400SUS.jmx"
+        "jmx": "testplans/AirPurifier/Core400S/US/Core400SUS.jmx",
 		"properties": "testplans/AirPurifier/Core400S/US/Core400SUS-production.properties"
     }
 }
