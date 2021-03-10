@@ -75,15 +75,13 @@ node(AGENT_LABEL) {
 
 	stage("Check Agent Health") {
 		echo "Execute command 'hostname' to check agent health (one minute once)."
-		retry(5) {
-            try {
-                timeout(1) {
-                    sh "hostname"
-                }
-            } catch (Exception e) {
-                error "Error. Cannot execute command now."
-            }
-        }
+		try {
+			timeout(1) {
+				sh "hostname"
+			}
+		} catch (Exception e) {
+			error "Error. Cannot execute command now."
+		}
 	}
 
 	stage("Assign JMeter Test Plan") {
