@@ -78,15 +78,13 @@ node(AGENT_LABEL) {
 	
 	stage("Check Agent Health") {
 		echo "Execute command 'hostname' to check agent health (one minute once)."
-		retry(5) {
-            try {
-                timeout(1) {
-                    sh "hostname"
-                }
-            } catch (Exception e) {
-                error "Error. Cannot execute command now."
-            }
-        }
+		try {
+			timeout(1) {
+				sh "hostname"
+			}
+		} catch (Exception e) {
+			error "Error. Cannot execute command now."
+		}
 	}
 	
 	stage("Pre-Build") {
@@ -96,9 +94,29 @@ node(AGENT_LABEL) {
 	}
 	
 	stage("Ant Build") {
-		timeout(15) {
-			sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML}"
+		def emptyTestPlanResult = "${PIPELINE_CONF_DIR}/resources/emptyTestPlan.jtl"
+		
+		// Run JMeter test plans to generate results (.jtl), results from last build will be deleted first.
+		try {
+			sh "timeout 900 ${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML} run"
+		} catch (Exception e) {
+			echo 'Error. Ant building was interrupted (caused by timeout or manual aborted), try to generate report for tests already runned.'
 		}
+		
+		jmx_file_names = readJSON file: "jmx.json"
+		jmx_file_names.each {
+			if (!fileExists("${it}.jtl")) {
+				sh "cp ${emptyTestPlanResult} ${it}.jtl"
+			}
+			
+			sh "if ! grep '</testResults>' ${it}.jtl ;\
+					then echo 'Closing tag </testResults> not found in result, test plan ${it}.jmx was interrupted.';\
+					sed -i 's/<testResults/& aborted=\"true\"/' ${it}.jtl;\
+					echo '<failure>true</failure>' >> ${it}.jtl;\
+					echo '</testResults>' >> ${it}.jtl;\
+				fi"
+		}
+		sh "${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML} report"
 	}
 	
 	stage("Publish HTML Reports") {
@@ -106,15 +124,15 @@ node(AGENT_LABEL) {
         jmx_file_names = readJSON file: "jmx.json"
         jmx_file_names.each {
 			jtlContent = readFile "${it}.jtl"
-			if (jtlContent.contains('s="false"')) {
+			if (jtlContent.contains('aborted="true"')) {
+				newReportName = "[ABORTED]${it}.html"
+			} else if (jtlContent.contains('s="false"')) {
 				newReportName = "[FAIL]${it}.html"
-				sh "mv reports/${it}.html reports/${newReportName}"
-				reportFiles.add(newReportName)
 			} else {
 				newReportName = "[PASS]${it}.html"
-				sh "mv reports/${it}.html reports/[PASS]${it}.html"
-				reportFiles.add(newReportName)
 			}
+			sh "mv reports/${it}.html reports/${newReportName}"
+			reportFiles.add(newReportName)
         }
 		reportFilesString = reportFiles.join(",")
 		publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'reports', reportFiles: reportFilesString, reportName: "${TEST_NAME}", reportTitles: ""])
