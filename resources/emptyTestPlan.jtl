@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testResults version="1.2">
+<sample t="0" it="0" lt="0" ct="0" ts="1615424987964" s="true" lb="Debug Sampler" rc="200" rm="OK" tn="Thread Group 1-1" dt="text" de="GBK" by="251" sby="0" sc="1" ec="0" ng="1" na="1" hn="DESKTOP-IDD9N3H">
+  <responseHeader class="java.lang.String"></responseHeader>
+  <requestHeader class="java.lang.String"></requestHeader>
+  <responseData class="java.lang.String">JMeterVariables:
+JMeterThread.last_sample_ok=true
+JMeterThread.pack=org.apache.jmeter.threads.SamplePackage@2e23bd52
+START.HMS=090655
+START.MS=1615424815206
+START.YMD=20210311
+TESTSTART.MS=1615424987947
+__jm__Thread Group__idx=0
+__jmv_SAME_USER=true
+
+</responseData>
+  <responseFile class="java.lang.String"></responseFile>
+  <samplerData class="java.lang.String">JMeterVariables
+</samplerData>
+</sample>
