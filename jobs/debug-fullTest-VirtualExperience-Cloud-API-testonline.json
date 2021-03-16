@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testSripts/VirtualExperience.jmx"
+        "jmx": "testScripts/VirtualExperience.jmx"
     }
 }
