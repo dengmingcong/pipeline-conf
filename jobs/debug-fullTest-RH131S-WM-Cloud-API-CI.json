@@ -1,0 +1,9 @@
+{
+
+    "git": {
+        "branch": "Nana"
+    },
+    "jmeter": {
+        "jmx": "testSripts/131AirPurifier_WM_V1.0.jmx"
+    }
+}
