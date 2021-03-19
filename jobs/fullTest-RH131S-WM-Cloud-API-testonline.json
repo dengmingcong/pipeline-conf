@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testSripts/131AirPurifier_WM_V1.0.jmx"
+        "jmx": "testScripts/131AirPurifier_WM_V1.0.jmx"
     }
 }
