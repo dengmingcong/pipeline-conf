@@ -22,13 +22,15 @@ QA_HOME = "/data/qa"
 BUSINESS_REPO_NAME = "cloud-api-test"
 PIPELINE_CONF_NAME = "pipeline-conf"
 NACOS_JMETER_NAME = "nacos-jmeter"
+NACOS_SNAPSHOT_NAME = "nacos-snapshot"
 
 // Variables whose value will change, default for "stable"
 JMETER_HOME = "/usr/local/jmeter40"
 DEPLOY_TO="${QA_HOME}/deploy/stable"
-NACOS_JMETER_DIR = ""
-PIPELINE_CONF_DIR = ""
 BUSINESS_REPO_DIR = ""
+PIPELINE_CONF_DIR = ""
+NACOS_JMETER_DIR = ""
+NACOS_SNAPSHOT_DIR = ""
 STAGE = ""
 AGENT_LABEL = ""
 
@@ -65,6 +67,7 @@ def parseJobName() {
 	NACOS_JMETER_DIR = "${DEPLOY_TO}/${NACOS_JMETER_NAME}"
 	PIPELINE_CONF_DIR = "${DEPLOY_TO}/${PIPELINE_CONF_NAME}"
 	BUSINESS_REPO_DIR = "${DEPLOY_TO}/${BUSINESS_REPO_NAME}"
+	NACOS_SNAPSHOT_DIR = "${DEPLOY_TO}/${NACOS_SNAPSHOT_NAME}"
 }
 
 stage("Parse Job Name") {
@@ -90,7 +93,7 @@ node(AGENT_LABEL) {
 	stage("Pre-Build") {
         sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
         sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
-		sh "cd ${NACOS_JMETER_DIR}/bin; python3 init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML}"
+		sh "cd ${NACOS_JMETER_DIR}/bin; python3 init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML} ${NACOS_SNAPSHOT_DIR}"
 	}
 	
 	stage("Ant Build") {
