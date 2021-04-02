@@ -4,6 +4,6 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/Classic300SUS_offline_smoke.jmx"
+        "jmx": "testScripts/Classic300SUSRetail.jmx"
     }
 }
