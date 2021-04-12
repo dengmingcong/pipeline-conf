@@ -1,7 +1,5 @@
 #!/bin/bash/groovy
 
-properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '5')), disableConcurrentBuilds(), gitLabConnection('')])
-
 ENV_MAP = [
 	ci: [label: "fullTest", businessRepoName: "Automation_CI", businessRepoUrl: "git@local-git.vesync.com:testTeam/Automation_CI.git", businessRepoBranches: ["Raigor", "Regression_Raigor"]],
 	testonline: [label: "Predeploy-smokeTest", businessRepoName: "Automation_testonline", businessRepoUrl: "git@fangcun.vesync.com:testTeam/Automation_testonline.git", businessRepoBranches: ["master", "Regression_master"]], 
@@ -17,6 +15,7 @@ PIPELINE_CONF_DIR = ""
 STAGE = ""
 AGENT_LABEL = ""
 SMOKE_TAG = 0
+numToKeepStr = '5'
 
 /*
 ** 1. determine test stage based on Jenkins job name.
@@ -49,11 +48,14 @@ def parseJobName() {
 	
 	if (jobNameLowerCase.contains("smoketest") && jobNameLowerCase.contains("online")){
 		SMOKE_TAG = 1
+		numToKeepStr = '520'
 	}
 }
 
 stage("Set Envionment Variables") {
     parseJobName()
+	
+	properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: "${numToKeepStr}")), disableConcurrentBuilds(), gitLabConnection('')])
 	
 	PIPELINE_CONF_DIR = "${QA_HOME}/pipeline-conf/${PIPELINE_CONF_BRANCH}"
 	
