@@ -23,9 +23,10 @@ BUSINESS_REPO_NAME = "cloud-api-test"
 PIPELINE_CONF_NAME = "pipeline-conf"
 NACOS_JMETER_NAME = "nacos-jmeter"
 NACOS_SNAPSHOT_NAME = "nacos-snapshot"
+JMETER_SOURCE_DIR = "/data/jmeter"
 
 // Variables whose value will change, default for "stable"
-JMETER_HOME = "/usr/local/jmeter40"
+JMETER_HOME = JMETER_SOURCE_DIR
 DEPLOY_TO="${QA_HOME}/deploy/stable"
 BUSINESS_REPO_DIR = ""
 PIPELINE_CONF_DIR = ""
@@ -38,7 +39,7 @@ AGENT_LABEL = ""
 ** 1. determine test stage based on Jenkins job name.
 ** 2. if debug
 **   - set DEPLOY_TO to "${QA_HOME}/deploy/debug"
-**   - set JMETER_HOME to "${DEPLOY_TO}/jmeter40"
+**   - set JMETER_HOME to "${DEPLOY_TO}/jmeter"
 */
 def parseJobName() {
     def jobNameLowerCase = env.JOB_NAME.toLowerCase()
@@ -61,7 +62,7 @@ def parseJobName() {
 	
 	if (jobNameLowerCase.startsWith("debug")) {
 		DEPLOY_TO = "${QA_HOME}/deploy/debug"
-		JMETER_HOME = "${DEPLOY_TO}/jmeter40"
+		JMETER_HOME = "${DEPLOY_TO}/jmeter"
 	}
 	
 	NACOS_JMETER_DIR = "${DEPLOY_TO}/${NACOS_JMETER_NAME}"
