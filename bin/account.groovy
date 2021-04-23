@@ -62,10 +62,10 @@ def setOpsLoginSessionCommonParams(propertyName) {
 **   "accountID": "${accountID}",
 **   "debugMode": true,
 */
-def setVeSyncLoginSessionCommonParams(propertyName, id) {
-	String appVersionPropName = "vesync.${id}.appVersion";
-	String phoneOSPropName = "vesync.${id}.phoneOS";
-	String timeZonePropName = "vesync.${id}.timeZone"
+def setVeSyncLoginSessionCommonParams(propertyName, id, propertyPrefix) {
+	String appVersionPropName = "${propertyPrefix}${id}.appVersion";
+	String phoneOSPropName = "${propertyPrefix}${id}.phoneOS";
+	String timeZonePropName = "${propertyPrefix}${id}.timeZone"
 	
 	String appVersion = props.get(appVersionPropName);
 	String phoneOS = props.get(phoneOSPropName);
@@ -106,8 +106,13 @@ if (args[0] == "setOps") {
 	String propertyName = "ops.account.${accountCode}.login-session.common-parameters";
 	setOpsLoginSessionCommonParams(propertyName);
 } else if (args[0] == "setVeSync") {
+	String propertyPrefix = "vesync."
+	if (args.size() == 3) {
+		propertyPrefix = args[2]
+	}
+	
 	String propertyName = "vesync.${accountCode}.login-session.common-parameters";
-	setVeSyncLoginSessionCommonParams(propertyName, accountCode);
+	setVeSyncLoginSessionCommonParams(propertyName, accountCode, propertyPrefix);
 }
 
 String accountIDPropName = "${accountCode}.accountID"
