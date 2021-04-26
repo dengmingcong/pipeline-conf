@@ -60,7 +60,7 @@ def setOpsMallLoginSessionCommonParams(propertyName, propertyPrefix) {
 
 	String commonParams = """\
         "accountID": "${accountID}",
-        "token": "YzkyZDhjYTUwYmRiZTI4YjU4MjAzZWVlY2JmMjMwZjBhMDYyMzAwMGRiNTViZmY1ZjAxNmY0N2U1MzY5OTExMA==",
+        "token": "${token}",
         "timeZone": "${timeZone}",
         "acceptLanguage": "${acceptLanguage}",
         "osInfo": "${osInfo}",
