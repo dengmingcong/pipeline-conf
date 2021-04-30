@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.1">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="loginUser" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath">D:\jmeter40\lib\json.jar,D:\jmeter40\lib\mysql-connector-java-5.1.28.jar</stringProp>
+    </TestPlan>
+    <hashTree>
+      <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="loginUser1and2" enabled="true"/>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP信息头管理器" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json;charset=UTF-8</stringProp>
+            </elementProp>
+            <elementProp name="User-Agent" elementType="Header">
+              <stringProp name="Header.name">User-Agent</stringProp>
+              <stringProp name="Header.value">cloud-test</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号登陆email1清理数据" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;login&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;en&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${email1}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;,&#xd;
+    &quot;devToken&quot;: &quot;${devToken}&quot;,&#xd;
+    &quot;userType&quot;: &quot;1&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="-1244739161">&quot;code&quot;:</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">accountID1</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;accountID&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">-1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">token1</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;token&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+        </hashTree>
+        <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="ForEach控制器-删除存在的账号email1" enabled="true">
+          <stringProp name="ForeachController.inputVal">accountID1</stringProp>
+          <stringProp name="ForeachController.returnVal">accountID1</stringProp>
+          <boolProp name="ForeachController.useSeparator">true</boolProp>
+          <stringProp name="ForeachController.startIndex">0</stringProp>
+          <stringProp name="ForeachController.endIndex">${accountID1_matchNr}</stringProp>
+        </ForeachController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="注销用户email清理数据" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;deleteUser&quot;,&#xd;
+    &quot;token&quot;: &quot;${token1}&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;accountID&quot;: &quot;${accountID1}&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;&#xd;
+    &#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/cloud/v1/user/deleteUser</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0," enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1244739161">&quot;code&quot;:</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+          <IncludeController guiclass="IncludeControllerGui" testclass="IncludeController" testname="引用checkDeleteUser2Data" enabled="true">
+            <stringProp name="IncludeController.includepath">checkDeleteUser2Data4BT.jmx</stringProp>
+          </IncludeController>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号登陆account清理数据" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;login&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${account}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;,&#xd;
+    &quot;devToken&quot;: &quot;devToken&quot;,&#xd;
+    &quot;userType&quot;: &quot;1&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">accountID</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;accountID&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">-1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">token</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;token&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0," enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="-1244739161">&quot;code&quot;:</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="ForEach控制器-删除存在的账号account" enabled="true">
+          <stringProp name="ForeachController.inputVal">accountID</stringProp>
+          <stringProp name="ForeachController.returnVal">accountID</stringProp>
+          <boolProp name="ForeachController.useSeparator">true</boolProp>
+          <stringProp name="ForeachController.startIndex">0</stringProp>
+          <stringProp name="ForeachController.endIndex">${accountID_matchNr}</stringProp>
+        </ForeachController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="注销用户account清理数据" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;deleteUser&quot;,&#xd;
+    &quot;token&quot;: &quot;${token}&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;accountID&quot;: &quot;${accountID}&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;&#xd;
+    &#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/cloud/v1/user/deleteUser</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0," enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1244739161">&quot;code&quot;:</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+          <IncludeController guiclass="IncludeControllerGui" testclass="IncludeController" testname="引用checkDeleteUserData" enabled="true">
+            <stringProp name="IncludeController.includepath">checkDeleteUserData4BT.jmx</stringProp>
+          </IncludeController>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号登陆account-确认注销成功并等待8s" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;login&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;en&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${account}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;,&#xd;
+    &quot;devToken&quot;: &quot;${devToken}&quot;,&#xd;
+    &quot;userType&quot;: &quot;1&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/cloud/v1/user/login</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">8000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1244739161">&quot;code&quot;:</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="校验用户account不存在" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,traceId)}&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;method&quot;: &quot;isAccountExist&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;account&quot;:&quot;${account}&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/isAccountExist</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="响应断言" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="67791721">&quot;code&quot;:0</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="false">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">String prefix = &quot;&quot;;
+String account = &quot;&quot;;
+prefix = &quot;${__time(,account_pre)}&quot;;
+account = &quot;cheryl&quot;+prefix + &quot;@cloudtest.com&quot;;
+
+vars.put(&quot;cloudemail&quot;,account);</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="注册account(vesync)---5分钟后输入" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,traceId)}&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;method&quot;: &quot;registerV2&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${account}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;,&#xd;
+   &quot;countryCode&quot;:&quot;${countryCode1}&quot;,&#xd;
+    &quot;isRequiredVerify&quot;: true,&#xd;
+    &quot;verifyEmail&quot;:&quot;${account}&quot;,&#xd;
+    &quot;code&quot;: &quot;${code}&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v2/user/registerV2</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="响应断言" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="67791721">&quot;code&quot;:0</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="从 redis 获取验证码" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename">getVerifyCodeFromRedis.groovy</stringProp>
+            <stringProp name="parameters">${account}</stringProp>
+            <stringProp name="script"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="获取code" enabled="false">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">import redis.clients.jedis.Jedis;
+import org.apache.commons.lang3.StringUtils;
+//public static void main(String[] args) {
+        Jedis jedis = new Jedis(&quot;${redisip}&quot;, 6379);
+        if(StringUtils.isNotBlank(&quot;${redispassword}&quot;)){
+        jedis.auth(&quot;${redispassword}&quot;);
+        }
+        jedis.select(0);
+
+//============将key及对应的value写入redis，并赋给a===============
+
+//===========用key查询对应的value，并赋给get================
+        String get = jedis.get(&quot;w:a:${account}:${account}&quot;);
+        System.out.println(get);
+        vars.put(&quot;get&quot;,get);  //将key值保存为变量
+
+   // }
+String code = &quot;&quot;;
+code = get ;
+
+vars.put(&quot;code&quot;,code);</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号注册accoount" enabled="false">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;register&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;debugMode&quot;:true,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${account}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0," enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="-1244739161">&quot;code&quot;:</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号登陆-account" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;login&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;en&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${account}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;,&#xd;
+    &quot;devToken&quot;: &quot;${devToken}&quot;,&#xd;
+    &quot;userType&quot;: &quot;1&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="67791721">&quot;code&quot;:0</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">accountID</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;accountID&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">token</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;token&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="校验用户email1不存在" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,traceId)}&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;method&quot;: &quot;isAccountExist&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;account&quot;:&quot;${email1}&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/isAccountExist</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="响应断言" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="67791721">&quot;code&quot;:0</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="false">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">String prefix = &quot;&quot;;
+String account = &quot;&quot;;
+prefix = &quot;${__time(,account_pre)}&quot;;
+account = &quot;cheryl&quot;+prefix + &quot;@cloudtest.com&quot;;
+
+vars.put(&quot;cloudemail&quot;,account);</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="注册email1(vesync)---5分钟后输入" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,traceId)}&quot;,&#xd;
+    &quot;debugMode&quot;: true,&#xd;
+    &quot;method&quot;: &quot;registerV2&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${email1}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;,&#xd;
+   &quot;countryCode&quot;:&quot;${countryCode1}&quot;,&#xd;
+    &quot;isRequiredVerify&quot;: true,&#xd;
+    &quot;verifyEmail&quot;:&quot;${email1}&quot;,&#xd;
+    &quot;code&quot;: &quot;${code}&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v2/user/registerV2</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="响应断言" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="67791721">&quot;code&quot;:0</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="获取code" enabled="false">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">import redis.clients.jedis.Jedis;
+import org.apache.commons.lang3.StringUtils;
+//public static void main(String[] args) {
+        Jedis jedis = new Jedis(&quot;${redisip}&quot;, 6379);
+        if(StringUtils.isNotBlank(&quot;${redispassword}&quot;)){
+        jedis.auth(&quot;${redispassword}&quot;);
+        }
+        jedis.select(0);
+
+//============将key及对应的value写入redis，并赋给a===============
+
+//===========用key查询对应的value，并赋给get================
+        String get = jedis.get(&quot;w:a:${email1}:${email1}&quot;);
+        System.out.println(get);
+        vars.put(&quot;get&quot;,get);  //将key值保存为变量
+
+   // }
+String code = &quot;&quot;;
+code = get ;
+
+vars.put(&quot;code&quot;,code);</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="从 redis 获取验证码" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename">getVerifyCodeFromRedis.groovy</stringProp>
+            <stringProp name="parameters">${email1}</stringProp>
+            <stringProp name="script"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号注册email1" enabled="false">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;register&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;debugMode&quot;:true,&#xd;
+    &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${email1}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/register</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0," enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="-1244739161">&quot;code&quot;:</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号登陆-email1" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
+    &quot;method&quot;: &quot;login&quot;,&#xd;
+    &quot;token&quot;: &quot;&quot;,&#xd;
+    &quot;accountID&quot;: &quot;&quot;,&#xd;
+    &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
+    &quot;acceptLanguage&quot;:&quot;en&quot;,&#xd;
+    &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
+    &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
+    &quot;email&quot;:&quot;${email1}&quot;,&#xd;
+    &quot;password&quot;:&quot;${password}&quot;,&#xd;
+    &quot;devToken&quot;: &quot;${devToken}&quot;,&#xd;
+    &quot;userType&quot;: &quot;1&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/cloud/v1/user/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="67791721">&quot;code&quot;:0</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">accountID1</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;accountID&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="正则表达式提取器" enabled="true">
+            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+            <stringProp name="RegexExtractor.refname">token1</stringProp>
+            <stringProp name="RegexExtractor.regex">&quot;token&quot;:&quot;(.+?)&quot;</stringProp>
+            <stringProp name="RegexExtractor.template">$1$</stringProp>
+            <stringProp name="RegexExtractor.default">1</stringProp>
+            <stringProp name="RegexExtractor.match_number">1</stringProp>
+          </RegexExtractor>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
