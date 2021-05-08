@@ -113,7 +113,7 @@
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
 &quot;context&quot;:{&#xd;
-${__evalVar(comm)}&#xd;
+${__evalVar(commf)}&#xd;
 &quot;method&quot;: &quot;deleteAllByAccountId&quot;&#xd;
 },&#xd;
 &#xd;
