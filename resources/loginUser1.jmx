@@ -142,7 +142,7 @@
           <stringProp name="ForeachController.endIndex">${accountID_matchNr}</stringProp>
         </ForeachController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="注销用户account清理数据" enabled="false">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="注销用户account清理数据" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -191,7 +191,7 @@
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="testSupport检查后删除数据deleteAllByAccountId" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="testSupport检查后删除数据deleteAllByAccountId--注销之后等5s再删" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -235,6 +235,10 @@ ${__evalVar(comm)}&#xd;
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">2</intProp>
             </ResponseAssertion>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">5000</stringProp>
+            </ConstantTimer>
             <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="testSupport检查后删除数据deleteAllByDeviceCid" enabled="true">
@@ -344,7 +348,7 @@ ${__evalVar(comm)}&#xd;
             </JSR223Assertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号登陆account-确认注销成功并等待8s" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="账号登陆account-确认注销成功并等待3s" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -385,7 +389,7 @@ ${__evalVar(comm)}&#xd;
           </HTTPSamplerProxy>
           <hashTree>
             <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
-              <stringProp name="ConstantTimer.delay">8000</stringProp>
+              <stringProp name="ConstantTimer.delay">3000</stringProp>
             </ConstantTimer>
             <hashTree/>
             <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0" enabled="true">
