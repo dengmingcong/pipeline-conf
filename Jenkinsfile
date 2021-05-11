@@ -93,7 +93,6 @@ node(AGENT_LABEL) {
         if (!fileExists(jobConfFile)) {
             error "Configuration file ${jobConfFile} does not exist."
         }
-
         echo readFile(encoding: 'utf-8', file: jobConfFile)
         def jenkinsConf = readJSON file: jobConfFile
 		
