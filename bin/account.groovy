@@ -138,7 +138,13 @@ def setVeSyncMallLoginSessionCommonParams(propertyName, id, propertyPrefix) {
 	log.info("name: ${propertyName}, value: ${commonParams}")
 }
 
-String accountIDJSONPath = '$.result.accountID';
+String accountIDJSONPath = ""
+if (args[0] == "setOpsMall") {
+	accountIDJSONPath = '$.result.accountId';
+} else {
+	accountIDJSONPath = '$.result.accountID';
+}
+
 String tokenJSONPath = '$.result.token';
 
 // Get login response
