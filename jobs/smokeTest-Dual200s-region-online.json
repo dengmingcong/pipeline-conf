@@ -4,6 +4,7 @@
         "branch": "master"
     },
     "jmeter": {
-        "jmx": "testScripts/Dual200_smokeTest.jmx"
+        "jmx": "testScripts/Dual200_smokeTest.jmx",
+		"properties": "testplans/AirPurifier/Core400S/US/dual200_production.properties"
     }
 }
