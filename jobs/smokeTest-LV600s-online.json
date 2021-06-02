@@ -5,6 +5,6 @@
     },
     "jmeter": {
         "jmx": "testScripts/LV600S_smokeTest.jmx",
-		"properties": "testplans/AirPurifier/Core400S/US/dual200_production.properties"
+		"properties": "testScripts/dual200_production.properties"
     }
 }
