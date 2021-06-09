@@ -33,7 +33,7 @@ NACOS_JMETER_DIR = ""
 NACOS_SNAPSHOT_DIR = ""
 STAGE = ""
 AGENT_LABEL = ""
-IS_SMOKE_TEST = false
+PUSH_TO_FALCON = false
 numToKeepStr = '5'
 
 /*
@@ -58,8 +58,8 @@ def parseJobName() {
     	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', 'predeploy', 'online', or 'production' (case insensitive)."
     }
 	
-	if (jobNameLowerCase.contains("smoketest") && STAGE == "production"){
-		IS_SMOKE_TEST = true
+	if (jobNameLowerCase.contains("smoketest") && STAGE == "production" && !jobNameLowerCase.startsWith("debug")){
+		PUSH_TO_FALCON = true
 		numToKeepStr = '520'
 	}
 	
@@ -102,7 +102,7 @@ node(AGENT_LABEL) {
 	stage("Pre-Build") {
         sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
         sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
-		sh "cd ${NACOS_JMETER_DIR}/bin; python3 init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML} ${NACOS_SNAPSHOT_DIR} ${IS_SMOKE_TEST}"
+		sh "cd ${NACOS_JMETER_DIR}/bin; python3 init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML} ${NACOS_SNAPSHOT_DIR} ${PUSH_TO_FALCON}"
 	}
 	
 	stage("Ant Build") {
