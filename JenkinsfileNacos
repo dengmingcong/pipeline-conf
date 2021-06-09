@@ -9,13 +9,12 @@
 ** Deploying 'debug' means deploying jobs whose names start with 'debug'.
 */
 
-properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '5')), disableConcurrentBuilds(), gitLabConnection('')])
-
 // Variables whose value will not change
 ENV_MAP = [
 	ci: [label: "fullTest"],
 	testonline: [label: "Predeploy-smokeTest"], 
-	predeploy: [label: "Predeploy-smokeTest"]
+	predeploy: [label: "Predeploy-smokeTest"],
+	production: [label: "smokeTest"]
 ]
 ANT_HOME = "/data/apache-ant-1.9.14"
 QA_HOME = "/data/qa"
@@ -34,6 +33,8 @@ NACOS_JMETER_DIR = ""
 NACOS_SNAPSHOT_DIR = ""
 STAGE = ""
 AGENT_LABEL = ""
+IS_SMOKE_TEST = false
+numToKeepStr = '5'
 
 /*
 ** 1. determine test stage based on Jenkins job name.
@@ -50,12 +51,17 @@ def parseJobName() {
     	STAGE = "testonline"
     } else if (jobNameLowerCase.endsWith("predeploy")) {
     	STAGE = "predeploy"
-    } else if (jobNameLowerCase.endsWith("online")) {
-    	STAGE = "online"
+    } else if (jobNameLowerCase.endsWith("online") || jobNameLowerCase.endsWith("production")) {
+    	STAGE = "production"
     }
 	else {
-    	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', 'predeploy', or 'online' (case insensitive)."
+    	error "Your job name ${env.JOB_NAME} is supposed to end with either one of words 'ci', 'testonline', 'predeploy', 'online', or 'production' (case insensitive)."
     }
+	
+	if (jobNameLowerCase.contains("smoketest") && STAGE == "production"){
+		IS_SMOKE_TEST = true
+		numToKeepStr = '520'
+	}
 	
 	AGENT_LABEL = ENV_MAP[STAGE]['label']
 	echo "Stages next would be executed on agents with label: ${AGENT_LABEL}."
@@ -73,6 +79,8 @@ def parseJobName() {
 
 stage("Parse Job Name") {
 	parseJobName()
+	
+	properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: "${numToKeepStr}")), disableConcurrentBuilds(), gitLabConnection('')])
 }
 
 node(AGENT_LABEL) {
@@ -94,7 +102,7 @@ node(AGENT_LABEL) {
 	stage("Pre-Build") {
         sh "[[ -d ${ANT_HOME} ]] && [[ -d ${JMETER_HOME} ]]"
         sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
-		sh "cd ${NACOS_JMETER_DIR}/bin; python3 init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML} ${NACOS_SNAPSHOT_DIR}"
+		sh "cd ${NACOS_JMETER_DIR}/bin; python3 init_jenkins_build.py ${env.JOB_NAME} ${JENKINS_JOB_WORKSPACE} ${JMETER_HOME} ${TEST_NAME} ${BUSINESS_REPO_DIR} ${OUTPUT_BUILD_XML} ${NACOS_SNAPSHOT_DIR} ${IS_SMOKE_TEST}"
 	}
 	
 	stage("Ant Build") {
