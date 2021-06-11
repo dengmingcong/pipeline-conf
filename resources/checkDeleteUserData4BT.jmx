@@ -108,16 +108,6 @@ ${__evalVar(comm)}&#xd;
             <stringProp name="TestPlan.comments">蓝牙设备</stringProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="&quot;code&quot;:0," enabled="true">
-              <collectionProp name="Asserion.test_strings">
-                <stringProp name="67791721">&quot;code&quot;:0</stringProp>
-              </collectionProp>
-              <stringProp name="Assertion.custom_message"></stringProp>
-              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-              <boolProp name="Assertion.assume_success">false</boolProp>
-              <intProp name="Assertion.test_type">2</intProp>
-            </ResponseAssertion>
-            <hashTree/>
             <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="轮询返回&quot;success&quot;:true" enabled="true">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters">[&apos;&quot;success&quot;:true&apos;]</stringProp>
