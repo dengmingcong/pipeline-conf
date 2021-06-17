@@ -1,0 +1,10 @@
+{
+    "env": "online",
+    "git": {
+        "branch": "master"
+    },
+    "jmeter": {
+        "jmx": "testScripts/LV600S_smokeTest.jmx",
+		"properties": "testScripts/dual200_production.properties"
+    }
+}
