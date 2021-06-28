@@ -75,6 +75,10 @@ responseAsMap = jsonSlurper.parseText(responseText);
 token = responseAsMap['result'][tokenKeyName]
 accountID = responseAsMap['result'][accountIDKeyName]
 log.info("accountID: ${accountID}, token: ${token}");
+String tokenPropName = "${outputPropName}.token"
+String accountIDPropName = "${outputPropName}.accountID"
+props.put(tokenPropName, token)
+props.put(accountIDPropName, accountID)
 
 isLegacy = true
 
