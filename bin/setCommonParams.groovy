@@ -55,6 +55,7 @@ def setClientTypeOnPhoneOS(String phoneOS) {
     return clientType
 }
 
+log.info("parameters: ${Parameters}")
 outputPropName = args[0]
 String outputType = args[1]
 // can only be one of "LEGACY, LATEST"
@@ -78,7 +79,9 @@ log.info("accountID: ${accountID}, token: ${token}");
 String tokenPropName = "${outputPropName}.token"
 String accountIDPropName = "${outputPropName}.accountID"
 props.put(tokenPropName, token)
+log.info("property ${tokenPropName} was set to: ${token}")
 props.put(accountIDPropName, accountID)
+log.info("property ${accountIDPropName} was set to: ${accountID}")
 
 isLegacy = true
 
