@@ -38,7 +38,7 @@ def http_request_add_JSR223Listener():
         filename = LET.SubElement(jsr223_tree, "stringProp", attrib={"name": "filename"})
         filename.text = "pushToFalcon.groovy"
         
-        parameters = ET.SubElement(jsr223_tree, "stringProp", attrib={"name": "parameters"})
+        parameters = LET.SubElement(jsr223_tree, "stringProp", attrib={"name": "parameters"})
         parameters.text = jenkins_job_name
         
         cache_key = LET.SubElement(jsr223_tree, "stringProp", attrib={"name": "cacheKey"})
