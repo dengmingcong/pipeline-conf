@@ -97,12 +97,12 @@ List<String> sendGet(String url, Map<String,String> body) {
 */
 def pushToFalcon(String url) {
 	// skip if transaction sample
-	if (sampleEvent.isTransactionSampleEvent()) { return}
+	if (sampleEvent.isTransactionSampleEvent()) {return}
 	
 	def deviceType = vars.get("deviceType");
 	def deviceRegion = vars.get("deviceRegion");
 
-	String endpoint = "smokeTest-${deviceType}_${deviceRegion}";
+	String endpoint = Parameters;
 	def metric = prev.getUrlAsString();
 	def timestamp = System.currentTimeMillis();
 	def step = 120;
