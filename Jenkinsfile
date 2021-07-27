@@ -117,7 +117,7 @@ node(AGENT_LABEL) {
 		sh "cd ${JENKINS_JOB_WORKSPACE}; [[ -d reports ]] || mkdir reports; python3 ${PIPELINE_CONF_DIR}/bin/simple_controller_to_transaction_controller.py ${JMX} ${JMX}; cp ${PIPELINE_CONF_DIR}/resources/img/* reports"
 		
 		if (SMOKE_TAG == 1){
-			sh "python3 ${PIPELINE_CONF_DIR}/bin/http_requests_add_JSR223Listener.py ${JMX} ${JMX}"
+			sh "python3 ${PIPELINE_CONF_DIR}/bin/http_requests_add_JSR223Listener.py ${JMX} ${JMX} ${env.JOB_NAME}"
 		}
         
         echo "Generating customized build.xml.."

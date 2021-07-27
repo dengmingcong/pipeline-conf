@@ -3,6 +3,7 @@ from lxml import etree as LET
 
 src = sys.argv[1]
 dst = sys.argv[2]
+jenkins_job_name = sys.argv[3]
 
 
 def http_request_add_JSR223Listener():
@@ -36,6 +37,9 @@ def http_request_add_JSR223Listener():
         
         filename = LET.SubElement(jsr223_tree, "stringProp", attrib={"name": "filename"})
         filename.text = "pushToFalcon.groovy"
+        
+        parameters = ET.SubElement(jsr223_tree, "stringProp", attrib={"name": "parameters"})
+        parameters.text = jenkins_job_name
         
         cache_key = LET.SubElement(jsr223_tree, "stringProp", attrib={"name": "cacheKey"})
         cache_key.text = "true"
