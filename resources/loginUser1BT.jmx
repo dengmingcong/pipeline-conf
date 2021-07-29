@@ -319,7 +319,7 @@ vars.put(&quot;cloudemail&quot;,account);</stringProp>
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-    &quot;traceId&quot;: &quot;${__time(,traceId)}&quot;,&#xd;
+    &quot;traceId&quot;: &quot;${__time(,)}&quot;,&#xd;
     &quot;debugMode&quot;: true,&#xd;
     &quot;method&quot;: &quot;registerV2&quot;,&#xd;
     &quot;token&quot;: &quot;&quot;,&#xd;
@@ -327,11 +327,12 @@ vars.put(&quot;cloudemail&quot;,account);</stringProp>
     &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
     &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
     &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;registerAppVersion&quot;:&quot;${appVersion}&quot;,&#xd;
     &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
     &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
     &quot;email&quot;:&quot;${account}&quot;,&#xd;
     &quot;password&quot;:&quot;${password}&quot;,&#xd;
-   &quot;countryCode&quot;:&quot;${countryCode1}&quot;,&#xd;
+    &quot;countryCode&quot;:&quot;${countryCode1}&quot;,&#xd;
     &quot;isRequiredVerify&quot;: true,&#xd;
     &quot;verifyEmail&quot;:&quot;${account}&quot;,&#xd;
     &quot;code&quot;: &quot;${code}&quot;&#xd;

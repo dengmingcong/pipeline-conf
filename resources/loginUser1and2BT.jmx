@@ -422,6 +422,7 @@ vars.put(&quot;cloudemail&quot;,account);</stringProp>
     &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
     &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
     &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;registerAppVersion&quot;:&quot;${appVersion}&quot;,&#xd;
     &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
     &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
     &quot;email&quot;:&quot;${account}&quot;,&#xd;
@@ -691,6 +692,7 @@ vars.put(&quot;cloudemail&quot;,account);</stringProp>
     &quot;timeZone&quot;: &quot;${timeZone}&quot;,&#xd;
     &quot;acceptLanguage&quot;:&quot;${acceptLanguage}&quot;,&#xd;
     &quot;appVersion&quot;: &quot;${appVersion}&quot;,&#xd;
+    &quot;registerAppVersion&quot;:&quot;${appVersion}&quot;,&#xd;
     &quot;phoneBrand&quot;: &quot;${phoneBrand}&quot;,&#xd;
     &quot;phoneOS&quot;: &quot;${phoneOS}&quot;,&#xd;
     &quot;email&quot;:&quot;${email1}&quot;,&#xd;
