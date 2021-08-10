@@ -110,7 +110,7 @@ node(AGENT_LABEL) {
 		
 		// Run JMeter test plans to generate results (.jtl), results from last build will be deleted first.
 		try {
-			sh "timeout 900 ${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML} run"
+			sh "timeout -s 9 900 ${ANT_HOME}/bin/ant -file ${OUTPUT_BUILD_XML} run"
 		} catch (Exception e) {
 			echo 'Error. Ant building was interrupted (caused by timeout or manual aborted), try to generate report for tests already runned.'
 		}
